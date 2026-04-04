@@ -1,0 +1,572 @@
+<html>
+  <head>
+    <title>algoVisualizer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/styling/cssBasic.css">
+  <style>
+    /* UI/UX Polish Overrides */
+    .navbar-inverse {
+      background-color: #1e293b;
+      border-color: transparent;
+      margin-bottom: 0px !important;
+    }
+    .navbar-inverse .navbar-brand {
+      color: #f8fafc;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .navbar .container-fluid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+    .nav.navbar-nav {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      margin: 0;
+    }
+    .nav.navbar-nav > li > a {
+      color: #cbd5e1;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav.navbar-nav > li > a:hover {
+      color: white;
+    }
+    .dropdown-menu {
+      background-color: #ffffff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+      min-width: 220px !important;
+      border: none !important;
+    }
+    .dropdown-menu > li {
+      background-color: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      display: block !important;
+      border: none !important;
+    }
+    .dropdown-menu > li > a {
+      display: block !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      padding: 12px 16px !important;
+      color: #333333 !important;
+      text-align: left !important;
+      text-decoration: none !important;
+      background-color: transparent !important;
+      font-weight: 600 !important;
+      transition: background-color 0.2s ease, color 0.2s ease !important;
+    }
+    .dropdown-menu > li > a:hover {
+      background-color: #10b981 !important;
+      color: #ffffff !important;
+    }
+    #algo-hover-card {
+      position: absolute;
+      width: 300px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px) translateX(10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #algo-hover-card.visible {
+      opacity: 1;
+      transform: translateY(0) translateX(10px);
+    }
+    #algo-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+    }
+    #algo-card-desc {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .algo-card-badges {
+      display: flex;
+      gap: 8px;
+    }
+    .algo-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 99px;
+    }
+    .algo-badge.tc { background-color: #f1f5f9; color: #475569; }
+    .algo-badge.sc { background-color: #f0fdfa; color: #0d9488; }
+    
+    /* Code Execution Split Screen Layout */
+    #workspace-container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      align-items: flex-start;
+      height: calc(100vh - 55px);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    #main-visualizer {
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      transition: width 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+    }
+    #workspace-container.active-split #main-visualizer {
+      width: 70%;
+    }
+    #code-panel {
+      width: 0%;
+      height: 100%;
+      flex-shrink: 0;
+      position: relative;
+      min-height: 100vh;
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border-left: 0px solid transparent;
+    }
+    #workspace-container.active-split #code-panel {
+      width: 30%;
+      border-left: 2px solid #333333;
+    }
+    .code-panel-header {
+      background-color: #252526;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333333;
+    }
+    .code-panel-header select {
+      background: #3c3c3c;
+      color: #cccccc;
+      border: 1px solid #555555;
+      padding: 4px 8px;
+      border-radius: 4px;
+      outline: none;
+    }
+    .code-panel-content {
+      padding: 1.5rem;
+      background-color: #1e1e1e;
+      overflow-x: auto;
+      flex-grow: 1;
+    }
+    #code-container {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+      counter-reset: line;
+    }
+    .code-line {
+      display: block;
+      padding: 4px 8px;
+      border-left: 2px solid transparent;
+      counter-increment: line;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .code-line::before {
+      content: counter(line);
+      display: inline-block;
+      width: 1.5rem;
+      margin-right: 1.5rem;
+      text-align: right;
+      color: #858585;
+      user-select: none;
+    }
+    .code-line.active-line {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 2px solid #10b981;
+      font-weight: bold;
+      color: #ffffff;
+    }
+    #actualStartButton {
+      background-color: #10b981 !important;
+      border: none !important;
+      color: white !important;
+      font-weight: 700 !important;
+      border-radius: 6px !important;
+      padding: 8px 24px !important;
+      transition: all 0.2s ease !important;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3) !important;
+    }
+    #actualStartButton:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4) !important;
+      background-color: #059669 !important;
+    }
+    .speed-pill-container {
+      background-color: #334155;
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .speed-pill-btn {
+      border: none !important;
+      padding: 4px 12px !important;
+      border-radius: 9999px !important;
+      transition: all 0.2s ease !important;
+      font-size: 16px !important;
+      line-height: 1 !important;
+    }
+    .speed-pill-btn:hover {
+      transform: scale(1.1);
+    }
+    #mainText {
+      padding: 12px 0 !important;
+      background-color: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 13px;
+    }
+    .legend-box {
+      width: 18px !important;
+      height: 18px !important;
+      border-radius: 4px;
+    }
+  </style>
+    <link rel="shortcut icon" type="image/png" href="public/styling/c_icon.png"/>
+  </head>
+  <body>
+    <div id='navbarDiv'>
+     <nav class="navbar navbar-inverse">
+       <div class="container-fluid">
+         <div class="navbar-header">
+           <a id="refreshButton" class="navbar-brand" href="#">algoVisualizer</a>
+         </div>
+         <ul class="nav navbar-nav">
+           <li class="dropdown">
+             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Algorithms
+             <span class="caret"></span></a>
+             <ul class="dropdown-menu">
+               <li id='startButtonDijkstra'><a href="#">Dijkstra's Algorithm</a></li>
+               <li id='startButtonAStar2'><a href="#">A* Search</a></li>
+               <li id='startButtonGreedy'><a href="#">Greedy Best-first Search</a></li>
+               <li id='startButtonAStar'><a href="#">Swarm Algorithm</a></li>
+               <li id='startButtonAStar3'><a href="#">Convergent Swarm Algorithm</a></li>
+               <li id='startButtonBidirectional'><a href="#">Bidirectional Swarm Algorithm</a></li>
+               <li id='startButtonBFS'><a href="#">Breadth-first Search</a></li>
+               <li id='startButtonDFS'><a href="#">Depth-first Search</a></li>
+             </ul>
+           </li>
+           <li class="dropdown">
+             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Mazes &amp; Patterns
+             <span class="caret"></span></a>
+             <ul class="dropdown-menu">
+               <li id='startButtonCreateMazeTwo'><a href="#">Recursive Division</a></li>
+               <li id='startButtonCreateMazeThree'><a href="#">Recursive Division (vertical skew)</a></li>
+               <li id='startButtonCreateMazeFour'><a href="#">Recursive Division (horizontal skew)</a></li>
+               <li id='startButtonCreateMazeOne'><a href="#">Basic Random Maze</a></li>
+               <li id='startButtonCreateMazeWeights'><a href="#">Basic Weight Maze</a></li>
+               <li id='startStairDemonstration'><a href="#">Simple Stair Pattern</a></li>
+             </ul>
+           </li>
+           <li id='startButtonAddObject'><a href="#">Add Bomb</a></li>
+           <li id='startButtonStart'><button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize!</button></li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reset <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li id='startButtonClearBoard'><a href="#">Clear Board</a></li>
+          <li id='startButtonClearWalls'><a href="#">Clear Walls & Weights</a></li>
+          <li id='startButtonClearPath'><a href="#">Clear Path</a></li>
+        </ul>
+      </li>
+      <li style="display: flex; align-items: center; padding-left: 15px;">
+        <span style="color: #cbd5e1; margin-right: 12px; font-weight: 600;">Speed:</span>
+        <div class="speed-pill-container" id="speedDisplay">
+          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedSlow" title="Slow" style="background-color: transparent; border-radius: 9999px;">🐢</button>
+          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedAverage" title="Average" style="background-color: transparent; border-radius: 9999px;">🏃</button>
+          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedFast" title="Fast" style="background-color: #e2e8f0; border-radius: 9999px;">⚡</button>
+        </div>
+        <span id="adjustSpeed" style="display:none;"></span>
+      </li>
+      <li style="display: flex; align-items: center; padding-left: 20px;">
+        <button id="toggleCodePanelBtn" style="background-color: #334155; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 13px; transition: background-color 0.2s;">&lt;/&gt; Code Tracker</button>
+      </li>
+         </ul>
+       </div>
+     </nav>
+   </div>
+    <div id="tutorial">
+      <h3>Welcome to algoVisualizer!</h3>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 25px 0;">
+        <div style="position: relative; display: inline-block;">
+          <img src="public/styling/Virendra.jpeg" style="width: 160px; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <div style="position: absolute; bottom: -10px; right: -20px; background: white; padding: 6px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+            <img src="public/styling/clglogo.png" style="height: 42px; border-radius: 4px; display: block;">
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <h4 style="margin: 0; font-size: 22px; font-weight: 800; color: #2c3e50;">Virendra Gadekar</h4>
+          <p style="margin: 5px 0 15px 0; font-size: 14px; font-weight: 500; color: #7f8c8d;">Full Stack Developer | DYPSST 2027</p>
+          <div style="display: flex; justify-content: center; gap: 10px;">
+            <a href="https://github.com/viru0909-dev" target="_blank" style="background: #24292e; color: white; padding: 8px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">GitHub</a>
+            <a href="https://www.linkedin.com/in/virendragadekar/" target="_blank" style="background: #0a66c2; color: white; padding: 8px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">LinkedIn</a>
+          </div>
+          <div style="margin-top: 20px;">
+            <p style="font-size: 16px; font-weight: bold; color: #2c3e50; margin: 0 0 5px 0;">Enjoy!</p>
+            <p style="font-size: 13px; color: #7f8c8d; font-style: italic; margin: 0;">Exploring the depths of Algorithms, one node at a time.</p>
+          </div>
+        </div>
+      </div>
+      <button id="nextButton" class="btn btn-default navbar-btn" type="button">Next</button>
+      <button id="previousButton" class="btn btn-default navbar-btn" type="button">Previous</button>
+      <button id="skipButton" class="btn btn-default navbar-btn" type="button">Skip Tutorial</button>
+    </div>
+    <div id="workspace-container">
+      <div id="main-visualizer">
+        <div id='mainText' style="width: 100%; margin-bottom: 20px;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+          <div id="algorithmDescriptor" style="font-size: 14px; font-weight: 600; color: #475569; padding: 0; margin-bottom: 10px; border: none; text-align: center; width: 100%;">Pick an algorithm and visualize it!</div>
+          <ul style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; gap: 1.5rem; margin: 0; padding: 0; list-style: none;">
+            <li class="legend-item"><div class="start legend-box"></div><span style="color: #334155; font-weight: 500;">Start Node</span></li>
+            <li class="legend-item"><div class="target legend-box"></div><span style="color: #334155; font-weight: 500;">Target Node</span></li>
+            <li id="bombLegend" class="bombBlock legend-item"><div class="object legend-box"></div><span style="color: #334155; font-weight: 500;">Bomb Node</span></li>
+            <li id="weightLegend" class="weightBlock legend-item"><div class="weight legend-box"></div><span style="color: #334155; font-weight: 500;">Weight Node</span></li>
+            <li class="legend-item"><div class="unvisited legend-box" style="border: 1px solid #cbd5e1; background-color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"></div><span style="color: #334155; font-weight: 500;">Unvisited</span></li>
+            <li class="legend-item"><div class="visited legend-box"></div><span style="color: #334155; font-weight: 500;">Visited</span></li>
+            <li class="legend-item"><div class="shortest-path legend-box"></div><span style="color: #334155; font-weight: 500;">Shortest-path</span></li>
+            <li class="legend-item"><div class="wall legend-box"></div><span style="color: #334155; font-weight: 500;">Wall Node</span></li>
+          </ul>
+        </div>
+        </div>
+        <table id='board'></table>
+      </div>
+
+      <!-- The Sliding IDE Panel -->
+      <div id="code-panel">
+        <div class="code-panel-header">
+          <span style="font-weight: 600; font-size: 14px; color: #e1e4e8;">Execution Tracker</span>
+          <select id="code-language-selector">
+            <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+            <option value="cpp">C++</option>
+          </select>
+        </div>
+        <div class="code-panel-content">
+          <pre style="background: transparent; border: none; padding: 0; color: inherit; overflow: visible;"><code id="code-container">
+<!-- Code lines injected here dynamically -->
+          </code></pre>
+        </div>
+      </div>
+    </div>
+    <div id="algo-hover-card">
+      <div id="algo-card-title">Algorithm Name</div>
+      <p id="algo-card-desc">Description of the algorithm goes here. It provides a quick summary.</p>
+      <div class="algo-card-badges">
+        <span id="algo-card-tc" class="algo-badge tc">Time: O(1)</span>
+        <span id="algo-card-sc" class="algo-badge sc">Space: O(1)</span>
+      </div>
+    </div>
+  </body>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const algoData = {
+        'startButtonDijkstra': {
+          title: "Dijkstra's Algorithm",
+          desc: "The father of pathfinding algorithms. Guarantees the shortest path by exploring nodes uniformly based on lowest accumulated cost.",
+          tc: "O(E + V log V)",
+          sc: "O(V)"
+        },
+        'startButtonAStar2': {
+          title: "A* Search",
+          desc: "Arguably the best pathfinding algorithm. Uses heuristics to heavily optimize exploration, guaranteeing the shortest path much faster.",
+          tc: "O(E)",
+          sc: "O(V)"
+        },
+        'startButtonGreedy': {
+          title: "Greedy Best-first Search",
+          desc: "A faster, heavily heuristic-driven version of A*. It is very fast but does not guarantee finding the absolute shortest path.",
+          tc: "O(V log V)",
+          sc: "O(V)"
+        },
+        'startButtonAStar': {
+          title: "Swarm Algorithm",
+          desc: "A mixture of Dijkstra's and A* algorithms. Explores efficiently but does not guarantee the shortest path.",
+          tc: "O(E log V)",
+          sc: "O(V)"
+        },
+        'startButtonAStar3': {
+          title: "Convergent Swarm",
+          desc: "A faster, highly heuristic version of Swarm. Rapidly converges on the target but completely gives up a shortest-path guarantee.",
+          tc: "O(E log V)",
+          sc: "O(V)"
+        },
+        'startButtonBidirectional': {
+          title: "Bidirectional Swarm",
+          desc: "Executes the Swarm algorithm independently from both the Start and Target nodes simultaneously! Does not guarantee the shortest path.",
+          tc: "O(b^(d/2))",
+          sc: "O(b^(d/2))"
+        },
+        'startButtonBFS': {
+          title: "Breadth-first Search",
+          desc: "A great fundamental algorithm. Unweighted, but perfectly guarantees the shortest path on grid layouts.",
+          tc: "O(V + E)",
+          sc: "O(V)"
+        },
+        'startButtonDFS': {
+          title: "Depth-first Search",
+          desc: "A notoriously bad algorithm for pathfinding. Plunges deep into the grid without regard for distance. Does not guarantee a short path.",
+          tc: "O(V + E)",
+          sc: "O(V)"
+        }
+      };
+
+      const card = document.getElementById('algo-hover-card');
+      const titleEl = document.getElementById('algo-card-title');
+      const descEl = document.getElementById('algo-card-desc');
+      const tcEl = document.getElementById('algo-card-tc');
+      const scEl = document.getElementById('algo-card-sc');
+
+      Object.keys(algoData).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('mouseenter', (e) => {
+            const data = algoData[id];
+            titleEl.textContent = data.title;
+            descEl.textContent = data.desc;
+            tcEl.textContent = 'Time: ' + data.tc;
+            scEl.textContent = 'Space: ' + data.sc;
+            
+            const rect = el.getBoundingClientRect();
+            card.style.top = (rect.top + window.scrollY) + 'px';
+            card.style.left = (rect.right + window.scrollX) + 'px';
+            
+            card.classList.add('visible');
+          });
+          
+          el.addEventListener('mouseleave', () => {
+            card.classList.remove('visible');
+          });
+        }
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const algorithmsCode = {
+        dijkstra: {
+          javascript: [
+            "function dijkstra(graph, startNode) {",
+            "  const distances = {};",
+            "  distances[startNode] = 0;",
+            "  while (pq.length > 0) {",
+            "    let current = pq.dequeue();",
+            "    for (let neighbor of graph[current]) {"
+          ],
+          python: [
+            "def dijkstra(graph, start):",
+            "  distances = {node: float('inf') for node in graph}",
+            "  distances[start] = 0",
+            "  while queue:",
+            "    current = heapq.heappop(queue)",
+            "    for neighbor, weight in current.edges:"
+          ],
+          cpp: [
+            "void dijkstra(int start) {",
+            "  vector<int> dist(V, INF);",
+            "  dist[start] = 0;",
+            "  while(!pq.empty()) {",
+            "    int u = pq.top().second;",
+            "    for(auto x : adj[u]) {"
+          ],
+          java: [
+            "public void dijkstra(int start) {",
+            "  int[] dist = new int[V];",
+            "  Arrays.fill(dist, Integer.MAX_VALUE);",
+            "  dist[start] = 0;",
+            "  while(!pq.isEmpty()) {",
+            "    for(Edge e : adj[u]) {"
+          ]
+        }
+      };
+
+      let currentAlgorithm = 'dijkstra';
+      let currentLanguage = 'javascript';
+      const codeContainer = document.getElementById('code-container');
+      const languageSelector = document.getElementById('code-language-selector');
+
+      function renderCode() {
+        if (!algorithmsCode[currentAlgorithm] || !algorithmsCode[currentAlgorithm][currentLanguage]) return;
+        const codeLines = algorithmsCode[currentAlgorithm][currentLanguage];
+        codeContainer.innerHTML = codeLines.map((line, index) => 
+          `<span id="line-${index + 1}" class="code-line">${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>`
+        ).join('');
+      }
+
+      languageSelector.addEventListener('change', (e) => {
+        currentLanguage = e.target.value;
+        renderCode();
+      });
+
+      window.highlightLine = function(lineNumber) {
+        document.querySelectorAll('.code-line.active-line').forEach(el => el.classList.remove('active-line'));
+        const lineEl = document.getElementById(`line-${lineNumber}`);
+        if (lineEl) {
+          lineEl.classList.add('active-line');
+          lineEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      };
+
+      window.toggleSplitScreen = function(show) {
+        const workspace = document.getElementById('workspace-container');
+        if (show !== undefined) {
+          if (show) workspace.classList.add('active-split');
+          else workspace.classList.remove('active-split');
+        } else {
+          workspace.classList.toggle('active-split');
+        }
+      };
+
+      const toggleBtn = document.getElementById('toggleCodePanelBtn');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.toggleSplitScreen();
+        });
+      }
+
+      renderCode();
+    });
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src='public/browser/bundle.js'></script>
+</html>
