@@ -7,6 +7,17 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 })
 
-app.listen(1337, () => {
-  console.log("The server is up and running!");
+app.get("/nqueens", (req, res) => {
+  res.sendFile(__dirname + "/nqueens.html");
+})
+
+app.get("/sorting", (req, res) => {
+  res.sendFile(__dirname + "/sorting.html");
+})
+
+const PORT = process.env.PORT || 1337;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
+
+module.exports = app;

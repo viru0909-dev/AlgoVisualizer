@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>N-Queens Visualizer | algoVisualizer</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" type="image/png" href="public/styling/c_icon.png"/>
+  <style>
+    /* ── Base reset ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── NAVBAR — mirrors index.html exactly ─────────── */
+    .navbar-inverse {
+      background-color: #1e293b;
+      border-color: transparent;
+      margin-bottom: 0 !important;
+    }
+    .navbar-inverse .navbar-brand {
+      color: #f8fafc !important;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .navbar .container-fluid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+    .nav.navbar-nav {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      margin: 0;
+    }
+    .nav.navbar-nav > li > a {
+      color: #cbd5e1;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav.navbar-nav > li > a:hover { color: white; }
+
+    /* Active page tab */
+    .nav-page-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 13px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      margin: 0 2px;
+    }
+    .nav-page-tab.other {
+      color: #cbd5e1;
+      background: transparent;
+    }
+    .nav-page-tab.other:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .nav-page-tab.active-tab {
+      background-color: #10b981;
+      color: #fff !important;
+    }
+
+    /* ── INFO BAR (mimics index.html #mainText strip) ─── */
+    #nq-info-bar {
+      background-color: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 0 8px;
+      text-align: center;
+    }
+    #nq-info-bar .descriptor {
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+    #nq-info-bar .legend-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #334155;
+      font-weight: 500;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-icon { flex-shrink: 0; }
+    .ld-queen   { background: #f59e0b; }
+    .ld-attack  { background: rgba(239,68,68,0.45); border: 1.5px solid #ef4444; }
+    .ld-trying  { background: rgba(59,130,246,0.4); border: 1.5px solid #3b82f6; }
+    .ld-solution{ background: #4ade80; }
+    .ld-light   { background: #f0d9b5; border: 1.5px solid #d4b483; }
+    .ld-dark    { background: #b58863; }
+
+    /* ── CONTROLS BAR ── */
+    .ctrl-btn-icon{width:14px;height:14px;flex-shrink:0;vertical-align:middle;position:relative;top:-1px;}
+    #nq-controls {
+      background-color: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      gap: 1.5rem;
+      flex-wrap: nowrap;
+      position: relative;
+      z-index: 100;
+    }
+    #nq-controls label {
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 13px;
+      margin: 0;
+    }
+    .ctrl-select {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      cursor: pointer;
+      height: 30px;
+    }
+
+    /* Speed slider (replaces pills) */
+    .speed-slider-wrap { display:flex; align-items:center; gap:8px; }
+    .speed-slider-wrap span { font-size:11px; color:#64748b; font-weight:600; white-space:nowrap; }
+    #nq-speed-slider {
+      -webkit-appearance:none; appearance:none;
+      width:110px; height:4px; border-radius:2px;
+      background: linear-gradient(to right, #10b981 var(--p,70%), #475569 var(--p,70%));
+      outline:none; cursor:pointer;
+    }
+    #nq-speed-slider::-webkit-slider-thumb {
+      -webkit-appearance:none; width:14px; height:14px;
+      border-radius:50%; background:#10b981; cursor:pointer;
+      box-shadow:0 0 0 2px rgba(16,185,129,.25);
+    }
+    #nq-speed-slider::-moz-range-thumb { width:14px;height:14px;border-radius:50%;background:#10b981;border:none;cursor:pointer; }
+
+    /* Visualize button */
+    #nq-start-btn {
+      background-color: #059669 !important;
+      border: none !important;
+      color: white !important;
+      font-weight: 700 !important;
+      border-radius: 6px !important;
+      padding: 6px 20px !important;
+      transition: all 0.2s ease !important;
+      box-shadow: 0 4px 10px rgba(5,150,105,0.35) !important;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #nq-start-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(5,150,105,0.4) !important;
+      background-color: #047857 !important;
+    }
+    #nq-start-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+
+    /* Small control buttons */
+    .nq-btn-sm {
+      background-color: #334155;
+      color: #f8fafc;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .nq-btn-sm:hover { background-color: #475569; transform: translateY(-1px); }
+    .nq-btn-sm:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* Status badge */
+    #nq-status {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+    }
+    #nq-status .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #64748b;
+    }
+    #nq-status.running { color: #10b981; }
+    #nq-status.running .dot { background: #10b981; animation: dotBlink 1s infinite; }
+    #nq-status.done { color: #f59e0b; }
+    #nq-status.done .dot { background: #f59e0b; }
+    #nq-status.paused { color: #94a3b8; }
+    #nq-status.paused .dot { background: #94a3b8; }
+    @keyframes dotBlink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    /* ── WORKSPACE ───────────────────────────────────── */
+    body { overflow: hidden; }
+    #nq-workspace {
+      display: flex;
+      height: calc(100vh - 52px - 52px - 80px); /* navbar + controls + infobar */
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Left 70%: board area */
+    #nq-board-area {
+      width: 70%;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 16px;
+      gap: 12px;
+      background: #f8fafc;
+    }
+
+    /* Responsive board frame */
+    .board-frame {
+      background: #8B6914;
+      padding: 6px;
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      width: min(calc(100% - 32px), min(100%, calc(100vh - 52px - 52px - 80px - 80px)));
+      max-width: 600px;
+      aspect-ratio: 1 / 1;
+    }
+    .chess-board {
+      display: grid;
+      width: 100%; height: 100%;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .chess-board.glow-solution {
+      box-shadow: 0 0 0 4px #10b981, 0 0 30px rgba(16,185,129,0.4);
+    }
+    .cell {
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      transition: background 0.1s;
+      user-select: none;
+      aspect-ratio: 1;
+    }
+    .cell.cl { background: #f0d9b5; }
+    .cell.cd { background: #b58863; }
+
+    /* Queen piece — inline SVG rendered via JS */
+    .cell .queen-piece {
+      display: none;
+      width: 70%; height: 70%;
+      position: relative; z-index: 2;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.35));
+    }
+    .cell.has-queen .queen-piece {
+      display: block;
+      animation: qPlace 0.28s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .cell.removing .queen-piece {
+      display: block;
+      animation: qRemove 0.18s ease-in forwards;
+    }
+    /* Default queen color */
+    .cell .queen-piece svg { fill: #fbbf24; }
+    /* Solution queen color */
+    .cell.sol-queen .queen-piece svg { fill: #4ade80; filter: drop-shadow(0 0 6px rgba(74,222,128,0.5)); }
+
+    /* attack tint — overlay, preserves board color */
+    .cell.attacked::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(239,68,68,0.18);
+      pointer-events: none; z-index: 1;
+    }
+    .cell.cd.attacked::after { background: rgba(239,68,68,0.25); }
+
+    /* trying — subtle blue border pulse, preserves board color */
+    .cell.trying { animation: cellTry 0.55s ease-in-out infinite; }
+    .cell.trying::before {
+      content: '?';
+      position: absolute; z-index: 3;
+      font-size: 0.55em; font-weight: 800;
+      color: #3b82f6;
+      text-shadow: 0 0 6px rgba(59,130,246,0.7);
+    }
+    /* conflict */
+    .cell.conflict {
+      animation: shake 0.35s ease;
+    }
+    .cell.conflict::before {
+      content: '';
+      position: absolute; z-index: 3;
+      width: 40%; height: 40%;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+    .cell.conflict-src { outline: 3px solid #ef4444; }
+
+    @keyframes qPlace  { 0%{transform:scale(0) rotate(-180deg);opacity:0} 60%{transform:scale(1.15) rotate(8deg)} 100%{transform:scale(1) rotate(0);opacity:1} }
+    @keyframes qRemove { 0%{transform:scale(1);opacity:1} 100%{transform:scale(0) rotate(180deg);opacity:0} }
+    @keyframes cellTry { 0%,100%{box-shadow:inset 0 0 0 2px rgba(59,130,246,.25)} 50%{box-shadow:inset 0 0 0 3px rgba(59,130,246,.7)} }
+    @keyframes shake   { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
+    /* progress */
+    .progress-row {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; max-width: 560px;
+    }
+    .progress-bar-wrap {
+      flex: 1; height: 5px;
+      background: #e2e8f0; border-radius: 9999px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      border-radius: 9999px;
+      width: 0%; transition: width 0.1s;
+    }
+    .progress-label { font-size: 12px; color: #94a3b8; font-weight: 500; white-space: nowrap; }
+
+    /* Right 30%: panel */
+    #nq-panel {
+      width: 30%;
+      flex-shrink: 0;
+      background: #1a1d24;
+      border-left: 1px solid #2d3340;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #nq-panel::-webkit-scrollbar { display: none; }
+    .panel-section {
+      border-bottom: 1px solid #2d3340;
+      padding: 14px 16px;
+    }
+    .panel-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 12px;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 20px; font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: #10b981;
+    }
+    .stat-value.gold   { color: #f59e0b; }
+    .stat-value.muted  { color: #94a3b8; }
+    .stat-value.red    { color: #f87171; }
+    .stat-label {
+      font-size: 10px; font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Code tracker — same dark IDE look as index.html code-panel */
+    .code-block {
+      background: #0f172a;
+      border-radius: 6px;
+      padding: 10px 8px;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 11.5px;
+      line-height: 1.75;
+    }
+    .code-ln {
+      display: block;
+      padding: 1px 8px;
+      border-left: 2px solid transparent;
+      color: #94a3b8;
+      white-space: pre;
+    }
+    .code-ln.active {
+      background: rgba(16,185,129,0.1);
+      border-left-color: #10b981;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    .kw  { color: #c084fc; }
+    .fn  { color: #60a5fa; }
+    .cm  { color: #475569; }
+    .str { color: #4ade80; }
+    .num { color: #f59e0b; }
+
+    /* Gallery */
+    .gallery-scroll {
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #475569 transparent;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+      gap: 6px;
+    }
+    .mini-board {
+      display: grid;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 2px solid transparent;
+    }
+    .mini-board:hover { transform: scale(1.1); border-color: #10b981; }
+    .mini-board.selected { border-color: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+    .mc { aspect-ratio: 1; }
+    .mc.ml { background: #e8d5a8; }
+    .mc.md { background: #a07850; }
+    .mc.mq { background: #fbbf24 !important; border-radius: 50%; transform: scale(0.55); }
+    .gallery-empty {
+      color: #475569; font-size: 12px; font-style: italic; text-align: center; padding: 16px 0;
+    }
+    .gallery-meta {
+      font-size: 11px; color: #64748b; font-weight: 600;
+      text-align: center; margin-top: 4px; padding-top: 6px;
+      border-top: 1px solid #334155;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 768px) {
+      #nq-workspace { flex-direction: column; height: auto; }
+      #nq-panel { width: 100%; border-left: none; border-top: 1px solid #2d3340; }
+      #nq-controls { height: auto; padding: 8px 16px; gap: 10px; flex-wrap: wrap; }
+    }
+    /* Queen SVG used as inline HTML */
+    .queen-svg-inline { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ NAVBAR ════════════════ -->
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">algoVisualizer</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="/"        class="nav-page-tab other"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Pathfinding</a></li>
+      <li><a href="/nqueens" class="nav-page-tab active-tab"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> N-Queens</a></li>
+      <li><a href="/sorting" class="nav-page-tab other"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Sorting</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ════════════════ CONTROLS BAR ════════════════ -->
+<div id="nq-controls">
+  <!-- Board size -->
+  <label for="boardSize">Board Size (N):</label>
+  <select id="boardSize" class="ctrl-select">
+    <option value="4">4 × 4</option>
+    <option value="5">5 × 5</option>
+    <option value="6">6 × 6</option>
+    <option value="7">7 × 7</option>
+    <option value="8" selected>8 × 8</option>
+    <option value="9">9 × 9</option>
+    <option value="10">10 × 10</option>
+    <option value="11">11 × 11</option>
+    <option value="12">12 × 12</option>
+  </select>
+
+  <!-- Speed -->
+  <label>Speed:</label>
+  <div class="speed-slider-wrap">
+    <span>Slow</span>
+    <input type="range" id="nq-speed-slider" min="1" max="100" value="70" style="--p:70%">
+    <span>Fast</span>
+  </div>
+
+  <!-- Action buttons -->
+  <button id="nq-start-btn" type="button"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!</button>
+  <button id="nq-step-btn"  class="nq-btn-sm"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,4 15,12 5,20" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg> Step</button>
+  <button id="nq-reset-btn" class="nq-btn-sm"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Reset</button>
+
+  <!-- Status -->
+  <span id="nq-status"><span class="dot"></span>Ready</span>
+</div>
+
+<!-- ════════════════ INFO BAR ════════════════ -->
+<div id="nq-info-bar">
+  <div class="descriptor">N-Queens — Place N non-attacking queens on an N x N board using backtracking</div>
+  <ul class="legend-row">
+    <li class="legend-item"><svg class="legend-icon" width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><path d="M2 20h20v2H2zM5 17l2-8 2.5 4L12 7l2.5 6L17 9l2 8z"/></svg>Queen</li>
+    <li class="legend-item"><div class="legend-dot ld-attack"></div>Under Attack</li>
+    <li class="legend-item"><div class="legend-dot ld-trying"></div>Trying Cell</li>
+    <li class="legend-item"><div class="legend-dot ld-solution"></div>Solution Found</li>
+    <li class="legend-item"><div class="legend-dot ld-light"></div>Light Square</li>
+    <li class="legend-item"><div class="legend-dot ld-dark"></div>Dark Square</li>
+  </ul>
+</div>
+
+<!-- ════════════════ WORKSPACE ════════════════ -->
+<div id="nq-workspace">
+
+  <!-- Board area -->
+  <div id="nq-board-area">
+    <div class="board-frame">
+      <div id="chessBoard" class="chess-board"></div>
+    </div>
+    <!-- Progress -->
+    <div class="progress-row">
+      <div class="progress-bar-wrap"><div id="progFill" class="progress-fill"></div></div>
+      <span id="progLabel" class="progress-label">Step 0 / 0</span>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div id="nq-panel">
+
+    <!-- Stats -->
+    <div class="panel-section">
+      <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Statistics</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div id="sSolutions" class="stat-value gold">0</div>
+          <div class="stat-label">Solutions</div>
+        </div>
+        <div class="stat-box">
+          <div id="sTotal" class="stat-value muted">92</div>
+          <div class="stat-label">Total Exists</div>
+        </div>
+        <div class="stat-box">
+          <div id="sSteps" class="stat-value">0</div>
+          <div class="stat-label">Steps</div>
+        </div>
+        <div class="stat-box">
+          <div id="sBT" class="stat-value red">0</div>
+          <div class="stat-label">Backtracks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Algorithm code tracker -->
+    <div class="panel-section">
+      <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Algorithm Tracker</div>
+      <div class="code-block">
+        <span id="cl1"  class="code-ln"><span class="kw">function</span> <span class="fn">solve</span>(row):</span>
+        <span id="cl2"  class="code-ln">  <span class="kw">if</span> row == N:</span>
+        <span id="cl3"  class="code-ln">    <span class="str">foundSolution()</span>  <span class="cm">// done</span></span>
+        <span id="cl4"  class="code-ln">  <span class="kw">for</span> col = <span class="num">0</span> to N-<span class="num">1</span>:</span>
+        <span id="cl5"  class="code-ln">    <span class="kw">if</span> <span class="fn">isSafe</span>(row, col):</span>
+        <span id="cl6"  class="code-ln">      board[row] = <span class="str">QUEEN</span></span>
+        <span id="cl7"  class="code-ln">      <span class="fn">solve</span>(row + <span class="num">1</span>)</span>
+        <span id="cl8"  class="code-ln">      board[row] = <span class="cm">EMPTY</span>  <span class="cm">// backtrack</span></span>
+        <span id="cl9"  class="code-ln">    <span class="kw">else</span>:</span>
+        <span id="cl10" class="code-ln">      <span class="cm">// conflict → skip</span></span>
+      </div>
+    </div>
+
+    <!-- Solutions gallery -->
+    <div class="panel-section" style="flex:1;">
+      <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Solutions Gallery <span id="galCount" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;color:#475569;"></span></div>
+      <div class="gallery-scroll">
+        <div id="galGrid" class="gallery-grid">
+          <div class="gallery-empty">Run the visualizer to find solutions!</div>
+        </div>
+      </div>
+      <div class="gallery-meta" id="galMeta"></div>
+    </div>
+
+  </div><!-- /panel -->
+</div><!-- /workspace -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+// ─── Known solution counts ───────────────────────────
+const TOTALS = {1:1,2:0,3:0,4:2,5:10,6:4,7:40,8:92,9:352,10:724,11:2680,12:14200};
+
+function nqGetDelay() {
+  const v = parseInt(document.getElementById('nq-speed-slider').value); // 1–100
+  // v=1 → ~400ms (slow), v=100 → ~1ms (fast)
+  return Math.max(1, Math.round(400 / Math.pow(v / 10, 1.8) + 1));
+}
+
+class NQueens {
+  constructor() {
+    this.n = 8;
+    this.steps = [];
+    this.cur = -1;
+    this.running = false;
+    this.timer = null;
+    this.speed = 'fast';
+    this.solutions = [];
+    this.cells = [];   // cells[row][col]
+    this.stats = { sol: 0, st: 0, bt: 0 };
+  }
+
+  /* ─── init / reset ──────────────────────────────── */
+  init(n) {
+    this.n = n;
+    this._pauseTimer();
+    this.steps = []; this.cur = -1;
+    this.solutions = [];
+    this.stats = { sol:0, st:0, bt:0 };
+    this._buildBoard();
+    this._refreshStats();
+    this._refreshProgress();
+    this._setStatus('ready');
+    document.getElementById('sTotal').textContent = TOTALS[n] ?? '?';
+    document.getElementById('galGrid').innerHTML = '<div class="gallery-empty">Run the visualizer to find solutions!</div>';
+    document.getElementById('galCount').textContent = '';
+    document.getElementById('galMeta').textContent  = '';
+    document.getElementById('nq-start-btn').innerHTML = '<svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!';
+    document.getElementById('nq-start-btn').disabled = false;
+    this._highlightCode(-1);
+  }
+
+  _buildBoard() {
+    const board = document.getElementById('chessBoard');
+    board.style.gridTemplateColumns = `repeat(${this.n}, 1fr)`;
+    board.innerHTML = '';
+    this.cells = [];
+    board.classList.remove('glow-solution');
+
+    for (let r = 0; r < this.n; r++) {
+      this.cells[r] = [];
+      for (let c = 0; c < this.n; c++) {
+        const cell = document.createElement('div');
+        cell.className = `cell ${(r+c)%2===0?'cl':'cd'}`;
+        cell.innerHTML = `<div class="queen-piece"><svg class="queen-svg-inline" viewBox="0 0 24 24" fill="#fbbf24" xmlns="http://www.w3.org/2000/svg"><path d="M2 20h20v2H2zM5 17l2-8 2.5 4L12 7l2.5 6L17 9l2 8z"/></svg></div>`;
+        board.appendChild(cell);
+        this.cells[r][c] = cell;
+      }
+    }
+  }
+
+  /* ─── generate all steps ────────────────────────── */
+  _generate() {
+    this.steps = [];
+    this.solutions = [];
+    const queens = [];
+    const n = this.n;
+
+    const findConflict = (row, col) => {
+      for (let r = 0; r < queens.length; r++) {
+        const qc = queens[r];
+        if (qc === col || Math.abs(r-row) === Math.abs(qc-col)) return { r, c: qc };
+      }
+      return null;
+    };
+
+    const solve = (row) => {
+      if (row === n) {
+        const sol = [...queens];
+        this.solutions.push(sol);
+        this.steps.push({ t:'SOL', queens: sol, idx: this.solutions.length-1 });
+        return;
+      }
+      for (let col = 0; col < n; col++) {
+        this.steps.push({ t:'TRY', row, col, queens: [...queens] });
+        const cf = findConflict(row, col);
+        if (cf) {
+          this.steps.push({ t:'CONF', row, col, cr: cf.r, cc: cf.c, queens: [...queens] });
+        } else {
+          queens.push(col);
+          this.steps.push({ t:'PLACE', row, col, queens: [...queens] });
+          solve(row + 1);
+          queens.pop();
+          this.steps.push({ t:'REM', row, col, queens: [...queens] });
+        }
+      }
+    };
+    solve(0);
+    this.steps.push({ t:'DONE', queens: [] });
+  }
+
+  /* ─── get all attacked cells ─────────────────────── */
+  _attacked(queens) {
+    const s = new Set();
+    for (let r = 0; r < queens.length; r++) {
+      const qc = queens[r];
+      for (let i = 0; i < this.n; i++) {
+        s.add(`${r},${i}`); s.add(`${i},${qc}`);
+      }
+      for (let d = 1; d < this.n; d++) {
+        for (const [dr,dc] of [[1,1],[1,-1],[-1,1],[-1,-1]]) {
+          const nr=r+dr*d, nc=qc+dc*d;
+          if (nr>=0&&nr<this.n&&nc>=0&&nc<this.n) s.add(`${nr},${nc}`);
+        }
+      }
+    }
+    return s;
+  }
+
+  /* ─── clear all cell classes ────────────────────── */
+  _clearBoard() {
+    for (let r = 0; r < this.n; r++)
+      for (let c = 0; c < this.n; c++) {
+        const cl = this.cells[r][c].classList;
+        cl.remove('has-queen','removing','attacked','trying','conflict','conflict-src','sol-queen');
+      }
+    document.getElementById('chessBoard').classList.remove('glow-solution');
+  }
+
+  /* ─── apply one step ────────────────────────────── */
+  _apply(step) {
+    this._clearBoard();
+    const queens = step.queens || [];
+    const n = this.n;
+
+    // place existing queens
+    queens.forEach((qc, r) => this.cells[r][qc].classList.add('has-queen'));
+
+    // attack overlay (only rows below current queens for "looking" context)
+    if (queens.length > 0) {
+      const att = this._attacked(queens);
+      att.forEach(key => {
+        const [r,c] = key.split(',').map(Number);
+        if (r<n && c<n && !this.cells[r][c].classList.contains('has-queen'))
+          this.cells[r][c].classList.add('attacked');
+      });
+    }
+
+    if (step.t === 'TRY') {
+      this.cells[step.row][step.col].classList.add('trying');
+      this._highlightCode(5);
+    } else if (step.t === 'CONF') {
+      this.cells[step.row][step.col].classList.add('conflict');
+      this.cells[step.cr][step.cc].classList.add('conflict-src');
+      this._highlightCode(10);
+      this.stats.bt++;
+    } else if (step.t === 'PLACE') {
+      this._highlightCode(6);
+    } else if (step.t === 'REM') {
+      this._highlightCode(8);
+    } else if (step.t === 'SOL') {
+      this.stats.sol++;
+      queens.forEach((qc,r) => this.cells[r][qc].classList.add('sol-queen'));
+      document.getElementById('chessBoard').classList.add('glow-solution');
+      this._addToGallery(queens, step.idx);
+      this._highlightCode(3);
+    } else if (step.t === 'DONE') {
+      this._highlightCode(1);
+      this._setStatus('done');
+      document.getElementById('nq-start-btn').innerHTML = '<svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Done';
+      document.getElementById('nq-start-btn').disabled = true;
+      this.running = false;
+    }
+
+    this.stats.st = this.cur + 1;
+    this._refreshStats();
+    this._refreshProgress();
+  }
+
+  /* ─── gallery ────────────────────────────────────── */
+  _addToGallery(queens, idx) {
+    const grid = document.getElementById('galGrid');
+    if (idx === 0) grid.innerHTML = '';
+    const mini = document.createElement('div');
+    mini.className = 'mini-board';
+    mini.style.gridTemplateColumns = `repeat(${this.n},1fr)`;
+    mini.title = `Solution #${idx+1}`;
+    mini.addEventListener('click', () => this._showSolution(idx));
+    for (let r = 0; r < this.n; r++)
+      for (let c = 0; c < this.n; c++) {
+        const mc = document.createElement('div');
+        mc.className = `mc ${queens[r]===c ? 'mq' : (r+c)%2===0 ? 'ml' : 'md'}`;
+        mini.appendChild(mc);
+      }
+    grid.appendChild(mini);
+    document.getElementById('galCount').textContent = `${idx+1} found`;
+    document.getElementById('galMeta').textContent  =
+      `${idx+1} of ${TOTALS[this.n] ?? '?'} solutions`;
+  }
+
+  _showSolution(idx) {
+    this._pauseTimer();
+    const sol = this.solutions[idx];
+    if (!sol) return;
+    this._clearBoard();
+    sol.forEach((qc,r) => { this.cells[r][qc].classList.add('has-queen','sol-queen'); });
+    const att = this._attacked(sol);
+    att.forEach(key => {
+      const [r,c] = key.split(',').map(Number);
+      if (!this.cells[r][c].classList.contains('has-queen'))
+        this.cells[r][c].classList.add('attacked');
+    });
+    document.getElementById('chessBoard').classList.add('glow-solution');
+    document.querySelectorAll('.mini-board').forEach((mb,i) =>
+      mb.classList.toggle('selected', i===idx));
+  }
+
+  /* ─── playback ───────────────────────────────────── */
+  play() {
+    if (this.steps.length === 0) {
+      this._setStatus('running');
+      document.getElementById('nq-start-btn').innerHTML = '<svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause';
+      setTimeout(() => { this._generate(); this.running = true; this._tick(); }, 30);
+    } else if (!this.running) {
+      this.running = true;
+      this._setStatus('running');
+      document.getElementById('nq-start-btn').innerHTML = '<svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause';
+      this._tick();
+    }
+  }
+  pause() {
+    this._pauseTimer();
+    if (this.cur < this.steps.length-1) {
+      this._setStatus('paused');
+      document.getElementById('nq-start-btn').innerHTML = '<svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Resume';
+    }
+  }
+  togglePlay() { this.running ? this.pause() : this.play(); }
+
+  _tick() {
+    if (!this.running) return;
+    this.cur++;
+    if (this.cur >= this.steps.length) { this.running = false; return; }
+    this._apply(this.steps[this.cur]);
+    if (this.running && this.steps[this.cur].t !== 'DONE')
+      this.timer = setTimeout(() => this._tick(), nqGetDelay());
+  }
+  _pauseTimer() { this.running = false; clearTimeout(this.timer); }
+
+  stepForward() {
+    if (this.steps.length === 0) this._generate();
+    if (this.cur < this.steps.length-1) { this.cur++; this._apply(this.steps[this.cur]); }
+  }
+
+  reset() {
+    this._pauseTimer();
+    this.steps = []; this.cur = -1;
+    this.solutions = [];
+    this.stats = { sol:0, st:0, bt:0 };
+    this._clearBoard();
+    this._refreshStats();
+    this._refreshProgress();
+    this._setStatus('ready');
+    document.getElementById('nq-start-btn').innerHTML = '<svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!';
+    document.getElementById('nq-start-btn').disabled = false;
+    document.getElementById('galGrid').innerHTML = '<div class="gallery-empty">Run the visualizer to find solutions!</div>';
+    document.getElementById('galCount').textContent = '';
+    document.getElementById('galMeta').textContent  = '';
+    this._highlightCode(-1);
+  }
+
+
+  /* ─── UI helpers ─────────────────────────────────── */
+  _highlightCode(line) {
+    for (let i=1; i<=10; i++) {
+      const el = document.getElementById('cl'+i);
+      if (el) el.classList.toggle('active', i===line);
+    }
+  }
+  _refreshStats() {
+    document.getElementById('sSolutions').textContent = this.stats.sol;
+    document.getElementById('sSteps').textContent     = this.stats.st.toLocaleString();
+    document.getElementById('sBT').textContent        = this.stats.bt.toLocaleString();
+  }
+  _refreshProgress() {
+    const total = this.steps.length || 1;
+    const pct   = ((this.cur+1)/total*100).toFixed(1);
+    document.getElementById('progFill').style.width  = pct + '%';
+    document.getElementById('progLabel').textContent =
+      `Step ${(this.cur+1).toLocaleString()} / ${total.toLocaleString()}`;
+  }
+  _setStatus(s) {
+    const el = document.getElementById('nq-status');
+    el.className = s;
+    const labels = { ready:'Ready', running:'Running...', done:'Complete', paused:'Paused' };
+    el.innerHTML = `<span class="dot"></span>${labels[s]||s}`;
+  }
+}
+
+/* ─── Bootstrap ──────────────────────────────────────── */
+const viz = new NQueens();
+viz.init(8);
+
+document.getElementById('boardSize').addEventListener('change', e => viz.init(+e.target.value));
+document.getElementById('nq-start-btn').addEventListener('click', () => viz.togglePlay());
+document.getElementById('nq-step-btn').addEventListener('click', () => viz.stepForward());
+document.getElementById('nq-reset-btn').addEventListener('click', () => viz.reset());
+// Speed slider — updates fill gradient and animation speed live
+const nqSlider = document.getElementById('nq-speed-slider');
+nqSlider.addEventListener('input', () => {
+  const pct = ((nqSlider.value - 1) / 99 * 100).toFixed(0);
+  nqSlider.style.setProperty('--p', pct + '%');
+});
+
+/* Keyboard: Space = play/pause, → = step, R = reset */
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space')      { e.preventDefault(); viz.togglePlay(); }
+  if (e.code === 'ArrowRight') { e.preventDefault(); viz.stepForward(); }
+  if (e.code === 'KeyR' && !e.metaKey && !e.ctrlKey) viz.reset();
+});
+</script>
+</body>
+</html>
