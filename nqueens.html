@@ -381,74 +381,96 @@
       margin-bottom: 12px;
     }
 
-    /* Stats */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+    /* Compact inline stat chips (replaces big stat boxes) */
+    .stat-chips {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 8px;
     }
-    .stat-box {
-      background: rgba(255,255,255,0.04);
+    .stat-chip {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.05);
       border: 1px solid #334155;
-      border-radius: 8px;
-      padding: 10px 8px;
-      text-align: center;
-    }
-    .stat-value {
-      font-size: 20px; font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      color: #10b981;
-    }
-    .stat-value.gold   { color: #f59e0b; }
-    .stat-value.muted  { color: #94a3b8; }
-    .stat-value.red    { color: #f87171; }
-    .stat-label {
-      font-size: 10px; font-weight: 600;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
-    }
-
-    /* Code tracker — same dark IDE look as index.html code-panel */
-    .code-block {
-      background: #0f172a;
       border-radius: 6px;
-      padding: 10px 8px;
+      padding: 4px 10px;
+      font-size: 12px; color: #94a3b8;
+      white-space: nowrap;
+    }
+    .stat-chip span {
+      font-weight: 700; font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-chip .gold { color: #f59e0b; }
+    .stat-chip .mut  { color: #94a3b8; }
+    .stat-chip .grn  { color: #10b981; }
+    .stat-chip .red  { color: #f87171; }
+
+    /* Code tracker — full dark IDE */
+    .panel-section {
+      border-bottom: 1px solid #2d3340;
+      padding: 14px 16px;
+      background: transparent;  /* never white */
+    }
+    .code-tracker-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: #0d1117;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .code-tracker-header {
+      background: #161b22;
+      padding: 6px 12px;
+      border-bottom: 1px solid #21262d;
+      font-size: 11px; color: #8b949e;
+      font-family: 'Fira Code', monospace;
+      flex-shrink: 0;
+    }
+    .code-block {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 4px;
       font-family: 'Fira Code', 'Courier New', monospace;
       font-size: 11.5px;
       line-height: 1.75;
+      background: #0d1117;
+      scrollbar-width: thin;
+      scrollbar-color: #30363d transparent;
     }
+    .code-block pre { background:transparent!important;border:none!important;padding:0!important;margin:0!important; }
     .code-ln {
       display: block;
-      padding: 1px 8px;
+      padding: 1px 12px;
       border-left: 2px solid transparent;
-      color: #94a3b8;
+      color: #8b949e;
       white-space: pre;
     }
     .code-ln.active {
-      background: rgba(16,185,129,0.1);
+      background: rgba(16,185,129,0.12);
       border-left-color: #10b981;
-      color: #e2e8f0;
+      color: #e6edf3;
       font-weight: 600;
     }
-    .kw  { color: #c084fc; }
-    .fn  { color: #60a5fa; }
-    .cm  { color: #475569; }
-    .str { color: #4ade80; }
-    .num { color: #f59e0b; }
+    .kw  { color: #ff7b72; }
+    .fn  { color: #79c0ff; }
+    .cm  { color: #8b949e; font-style: italic; }
+    .str { color: #a5f3c3; }
+    .num { color: #f2cc60; }
 
     /* Gallery */
     .gallery-scroll {
-      max-height: 200px;
+      flex: 1;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: #475569 transparent;
+      scrollbar-color: #334155 transparent;
+      padding: 8px;
     }
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+      gap: 8px;
     }
     .mini-board {
       display: grid;
@@ -456,21 +478,23 @@
       overflow: hidden;
       cursor: pointer;
       transition: all 0.15s;
-      border: 2px solid transparent;
+      border: 2px solid #2d3340;
     }
-    .mini-board:hover { transform: scale(1.1); border-color: #10b981; }
+    .mini-board:hover { transform: scale(1.05); border-color: #10b981; }
     .mini-board.selected { border-color: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.5); }
     .mc { aspect-ratio: 1; }
     .mc.ml { background: #e8d5a8; }
     .mc.md { background: #a07850; }
     .mc.mq { background: #fbbf24 !important; border-radius: 50%; transform: scale(0.55); }
     .gallery-empty {
-      color: #475569; font-size: 12px; font-style: italic; text-align: center; padding: 16px 0;
+      color: #475569; font-size: 12px; font-style: italic;
+      text-align: center; padding: 24px 8px;
+      grid-column: 1 / -1;
     }
     .gallery-meta {
       font-size: 11px; color: #64748b; font-weight: 600;
-      text-align: center; margin-top: 4px; padding-top: 6px;
-      border-top: 1px solid #334155;
+      text-align: center; padding: 6px 8px;
+      border-top: 1px solid #2d3340;
     }
 
     /* ── RESPONSIVE ──────────────────────────────────── */
@@ -651,45 +675,38 @@
   <!-- Right panel: top 70% = Code Tracker, bottom 30% = Solutions Gallery -->
   <div id="nq-panel">
 
-    <!-- TOP 70%: Stats + Code Tracker -->
+    <!-- TOP 70%: Code Tracker + inline stat chips -->
     <div class="panel-top">
-      <!-- Stats -->
-      <div class="panel-section" style="flex-shrink:0;">
-        <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Statistics</div>
-        <div class="stats-grid">
-          <div class="stat-box">
-            <div id="sSolutions" class="stat-value gold">0</div>
-            <div class="stat-label">Solutions</div>
-          </div>
-          <div class="stat-box">
-            <div id="sTotal" class="stat-value muted">92</div>
-            <div class="stat-label">Total Exists</div>
-          </div>
-          <div class="stat-box">
-            <div id="sSteps" class="stat-value">0</div>
-            <div class="stat-label">Steps</div>
-          </div>
-          <div class="stat-box">
-            <div id="sBT" class="stat-value red">0</div>
-            <div class="stat-label">Backtracks</div>
+      <div class="panel-section" style="flex:1;display:flex;flex-direction:column;overflow:hidden;padding-bottom:10px;">
+        <!-- Title row with inline stat chips -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+          <div class="panel-title" style="margin-bottom:0;">
+            <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Algorithm Tracker
           </div>
         </div>
-      </div>
-
-      <!-- Algorithm code tracker -->
-      <div class="panel-section" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
-        <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Algorithm Tracker</div>
-        <div class="code-block">
-          <span id="cl1"  class="code-ln"><span class="kw">function</span> <span class="fn">solve</span>(row):</span>
-          <span id="cl2"  class="code-ln">  <span class="kw">if</span> row == N:</span>
-          <span id="cl3"  class="code-ln">    <span class="str">foundSolution()</span>  <span class="cm">// done</span></span>
-          <span id="cl4"  class="code-ln">  <span class="kw">for</span> col = <span class="num">0</span> to N-<span class="num">1</span>:</span>
-          <span id="cl5"  class="code-ln">    <span class="kw">if</span> <span class="fn">isSafe</span>(row, col):</span>
-          <span id="cl6"  class="code-ln">      board[row] = <span class="str">QUEEN</span></span>
-          <span id="cl7"  class="code-ln">      <span class="fn">solve</span>(row + <span class="num">1</span>)</span>
-          <span id="cl8"  class="code-ln">      board[row] = <span class="cm">EMPTY</span>  <span class="cm">// backtrack</span></span>
-          <span id="cl9"  class="code-ln">    <span class="kw">else</span>:</span>
-          <span id="cl10" class="code-ln">      <span class="cm">// conflict → skip</span></span>
+        <!-- Compact stat chips row -->
+        <div class="stat-chips">
+          <div class="stat-chip">Found: <span class="gold" id="sSolutions">0</span></div>
+          <div class="stat-chip">Total: <span class="mut" id="sTotal">92</span></div>
+          <div class="stat-chip">Steps: <span class="grn" id="sSteps">0</span></div>
+          <div class="stat-chip">BT: <span class="red" id="sBT">0</span></div>
+        </div>
+        <!-- Dark IDE code block -->
+        <div class="code-tracker-wrap">
+          <div class="code-tracker-header">backtracking.pseudo</div>
+          <div class="code-block">
+            <span id="cl1"  class="code-ln"><span class="kw">function</span> <span class="fn">solve</span>(row):</span>
+            <span id="cl2"  class="code-ln">  <span class="kw">if</span> row == N:</span>
+            <span id="cl3"  class="code-ln">    <span class="str">foundSolution()</span>  <span class="cm">// done</span></span>
+            <span id="cl4"  class="code-ln">  <span class="kw">for</span> col = <span class="num">0</span> to N-<span class="num">1</span>:</span>
+            <span id="cl5"  class="code-ln">    <span class="kw">if</span> <span class="fn">isSafe</span>(row, col):</span>
+            <span id="cl6"  class="code-ln">      board[row] = <span class="str">QUEEN</span></span>
+            <span id="cl7"  class="code-ln">      <span class="fn">solve</span>(row + <span class="num">1</span>)</span>
+            <span id="cl8"  class="code-ln">      board[row] = <span class="cm">EMPTY</span>  <span class="cm">// backtrack</span></span>
+            <span id="cl9"  class="code-ln">    <span class="kw">else</span>:</span>
+            <span id="cl10" class="code-ln">      <span class="cm">// conflict → skip</span></span>
+          </div>
         </div>
       </div>
     </div><!-- /panel-top -->
