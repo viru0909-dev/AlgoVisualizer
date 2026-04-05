@@ -479,8 +479,90 @@
       #nq-panel { width: 100%; border-left: none; border-top: 1px solid #2d3340; }
       #nq-controls { height: auto; padding: 8px 16px; gap: 10px; flex-wrap: wrap; }
     }
-    /* Queen SVG used as inline HTML */
     .queen-svg-inline { width: 100%; height: 100%; }
+
+    /* ── RIGHT PANEL vertical layout ──────────────────── */
+    #nq-panel {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    .panel-top { flex: 7; display: flex; flex-direction: column; overflow: hidden; border-bottom: 2px solid #10b981; }
+    .panel-bottom { flex: 3; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+    .code-block {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #475569 transparent;
+    }
+    .gallery-scroll {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #475569 transparent;
+    }
+    .gallery-grid {
+      grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)) !important;
+    }
+
+    /* ── HOW TO USE MODAL ──────────────────────────────── */
+    #nq-guide-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    #nq-guide-overlay.open { display: flex; }
+    #nq-guide-modal {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.25);
+      width: min(520px, 92vw);
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px 28px 24px;
+      position: relative;
+      scrollbar-width: thin;
+    }
+    .guide-close {
+      position: absolute; top: 16px; right: 16px;
+      background: #f1f5f9; border: none; border-radius: 6px;
+      width: 30px; height: 30px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #64748b; transition: background .15s;
+    }
+    .guide-close:hover { background: #e2e8f0; color: #1e293b; }
+    .guide-h1 { font-size: 20px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+    .guide-sub { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+    .guide-section { margin-bottom: 18px; }
+    .guide-section-title {
+      font-size: 11px; font-weight: 700; color: #10b981;
+      text-transform: uppercase; letter-spacing: .8px;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    .guide-step {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 12px; border-radius: 8px;
+      background: #f8fafc; border: 1px solid #e2e8f0;
+      margin-bottom: 6px;
+    }
+    .guide-step-num {
+      min-width: 24px; height: 24px;
+      background: #1e293b; color: #fff;
+      border-radius: 50%; font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .guide-step-text { font-size: 13px; color: #334155; line-height: 1.5; }
+    .guide-tip {
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 12px; color: #166534; line-height: 1.6;
+    }
+    .guide-kbd {
+      display: inline-block; background: #1e293b; color: #e2e8f0;
+      padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -528,6 +610,12 @@
   <button id="nq-step-btn"  class="nq-btn-sm"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,4 15,12 5,20" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg> Step</button>
   <button id="nq-reset-btn" class="nq-btn-sm"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Reset</button>
 
+  <!-- Help button -->
+  <button id="nq-help-btn" class="nq-btn-sm" title="How to Use" style="margin-left:auto;">
+    <svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    How to Use
+  </button>
+
   <!-- Status -->
   <span id="nq-status"><span class="dot"></span>Ready</span>
 </div>
@@ -560,62 +648,114 @@
     </div>
   </div>
 
-  <!-- Right panel -->
+  <!-- Right panel: top 70% = Code Tracker, bottom 30% = Solutions Gallery -->
   <div id="nq-panel">
 
-    <!-- Stats -->
-    <div class="panel-section">
-      <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Statistics</div>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div id="sSolutions" class="stat-value gold">0</div>
-          <div class="stat-label">Solutions</div>
-        </div>
-        <div class="stat-box">
-          <div id="sTotal" class="stat-value muted">92</div>
-          <div class="stat-label">Total Exists</div>
-        </div>
-        <div class="stat-box">
-          <div id="sSteps" class="stat-value">0</div>
-          <div class="stat-label">Steps</div>
-        </div>
-        <div class="stat-box">
-          <div id="sBT" class="stat-value red">0</div>
-          <div class="stat-label">Backtracks</div>
+    <!-- TOP 70%: Stats + Code Tracker -->
+    <div class="panel-top">
+      <!-- Stats -->
+      <div class="panel-section" style="flex-shrink:0;">
+        <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Statistics</div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div id="sSolutions" class="stat-value gold">0</div>
+            <div class="stat-label">Solutions</div>
+          </div>
+          <div class="stat-box">
+            <div id="sTotal" class="stat-value muted">92</div>
+            <div class="stat-label">Total Exists</div>
+          </div>
+          <div class="stat-box">
+            <div id="sSteps" class="stat-value">0</div>
+            <div class="stat-label">Steps</div>
+          </div>
+          <div class="stat-box">
+            <div id="sBT" class="stat-value red">0</div>
+            <div class="stat-label">Backtracks</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Algorithm code tracker -->
-    <div class="panel-section">
-      <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Algorithm Tracker</div>
-      <div class="code-block">
-        <span id="cl1"  class="code-ln"><span class="kw">function</span> <span class="fn">solve</span>(row):</span>
-        <span id="cl2"  class="code-ln">  <span class="kw">if</span> row == N:</span>
-        <span id="cl3"  class="code-ln">    <span class="str">foundSolution()</span>  <span class="cm">// done</span></span>
-        <span id="cl4"  class="code-ln">  <span class="kw">for</span> col = <span class="num">0</span> to N-<span class="num">1</span>:</span>
-        <span id="cl5"  class="code-ln">    <span class="kw">if</span> <span class="fn">isSafe</span>(row, col):</span>
-        <span id="cl6"  class="code-ln">      board[row] = <span class="str">QUEEN</span></span>
-        <span id="cl7"  class="code-ln">      <span class="fn">solve</span>(row + <span class="num">1</span>)</span>
-        <span id="cl8"  class="code-ln">      board[row] = <span class="cm">EMPTY</span>  <span class="cm">// backtrack</span></span>
-        <span id="cl9"  class="code-ln">    <span class="kw">else</span>:</span>
-        <span id="cl10" class="code-ln">      <span class="cm">// conflict → skip</span></span>
-      </div>
-    </div>
-
-    <!-- Solutions gallery -->
-    <div class="panel-section" style="flex:1;">
-      <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Solutions Gallery <span id="galCount" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;color:#475569;"></span></div>
-      <div class="gallery-scroll">
-        <div id="galGrid" class="gallery-grid">
-          <div class="gallery-empty">Run the visualizer to find solutions!</div>
+      <!-- Algorithm code tracker -->
+      <div class="panel-section" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Algorithm Tracker</div>
+        <div class="code-block">
+          <span id="cl1"  class="code-ln"><span class="kw">function</span> <span class="fn">solve</span>(row):</span>
+          <span id="cl2"  class="code-ln">  <span class="kw">if</span> row == N:</span>
+          <span id="cl3"  class="code-ln">    <span class="str">foundSolution()</span>  <span class="cm">// done</span></span>
+          <span id="cl4"  class="code-ln">  <span class="kw">for</span> col = <span class="num">0</span> to N-<span class="num">1</span>:</span>
+          <span id="cl5"  class="code-ln">    <span class="kw">if</span> <span class="fn">isSafe</span>(row, col):</span>
+          <span id="cl6"  class="code-ln">      board[row] = <span class="str">QUEEN</span></span>
+          <span id="cl7"  class="code-ln">      <span class="fn">solve</span>(row + <span class="num">1</span>)</span>
+          <span id="cl8"  class="code-ln">      board[row] = <span class="cm">EMPTY</span>  <span class="cm">// backtrack</span></span>
+          <span id="cl9"  class="code-ln">    <span class="kw">else</span>:</span>
+          <span id="cl10" class="code-ln">      <span class="cm">// conflict → skip</span></span>
         </div>
       </div>
-      <div class="gallery-meta" id="galMeta"></div>
-    </div>
+    </div><!-- /panel-top -->
+
+    <!-- BOTTOM 30%: Solutions Gallery -->
+    <div class="panel-bottom">
+      <div class="panel-section" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div class="panel-title"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;position:relative;top:-1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Solutions Gallery <span id="galCount" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;color:#475569;"></span></div>
+        <div class="gallery-scroll">
+          <div id="galGrid" class="gallery-grid">
+            <div class="gallery-empty">Run the visualizer to find solutions!</div>
+          </div>
+        </div>
+        <div class="gallery-meta" id="galMeta"></div>
+      </div>
+    </div><!-- /panel-bottom -->
 
   </div><!-- /panel -->
 </div><!-- /workspace -->
+
+<!-- ════════ HOW TO USE MODAL ════════ -->
+<div id="nq-guide-overlay">
+  <div id="nq-guide-modal">
+    <button class="guide-close" id="nq-guide-close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="guide-h1">How to Use N-Queens</div>
+    <div class="guide-sub">An interactive backtracking visualizer — place N non-attacking queens on an N×N board.</div>
+
+    <div class="guide-section">
+      <div class="guide-section-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Getting Started
+      </div>
+      <div class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-text">Select a <strong>Board Size (N)</strong> from the dropdown — 4×4 is great for learning, 8×8 is the classic challenge.</div></div>
+      <div class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-text">Adjust the <strong>Speed slider</strong> — drag left for slow motion to follow each step, right for a fast overview.</div></div>
+      <div class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-text">Click <strong>Visualize!</strong> to run the full backtracking animation automatically.</div></div>
+    </div>
+
+    <div class="guide-section">
+      <div class="guide-section-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Reading the Board
+      </div>
+      <div class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-text"><strong>Golden crown</strong> = a Queen currently placed. <strong>Red overlay</strong> = cells attacked by a queen. <strong>Blue pulse</strong> = the cell being tried.</div></div>
+      <div class="guide-step"><div class="guide-step-num">5</div><div class="guide-step-text">When all queens are safely placed, the board <strong>glows green</strong> and a mini-board is added to the Solutions Gallery on the right.</div></div>
+      <div class="guide-step"><div class="guide-step-num">6</div><div class="guide-step-text">Watch the <strong>Algorithm Tracker</strong> on the right panel — the highlighted line shows exactly which line of pseudocode is executing.</div></div>
+    </div>
+
+    <div class="guide-section">
+      <div class="guide-section-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        Step Mode
+      </div>
+      <div class="guide-step"><div class="guide-step-num">7</div><div class="guide-step-text">Click <strong>Step</strong> to advance one step at a time — great for studying how backtracking works in detail.</div></div>
+      <div class="guide-step"><div class="guide-step-num">8</div><div class="guide-step-text">Click any <strong>mini-board in the Solutions Gallery</strong> to jump directly to that solution and see it on the main board.</div></div>
+    </div>
+
+    <div class="guide-tip">
+      <strong>Keyboard Shortcuts:</strong><br/>
+      <span class="guide-kbd">Space</span> Play / Pause &nbsp;
+      <span class="guide-kbd">→</span> Step Forward &nbsp;
+      <span class="guide-kbd">R</span> Reset
+    </div>
+  </div>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -940,6 +1080,11 @@ document.addEventListener('keydown', e => {
   if (e.code === 'ArrowRight') { e.preventDefault(); viz.stepForward(); }
   if (e.code === 'KeyR' && !e.metaKey && !e.ctrlKey) viz.reset();
 });
+/* How to Use modal */
+const nqGuideOverlay = document.getElementById('nq-guide-overlay');
+document.getElementById('nq-help-btn').addEventListener('click', () => nqGuideOverlay.classList.add('open'));
+document.getElementById('nq-guide-close').addEventListener('click', () => nqGuideOverlay.classList.remove('open'));
+nqGuideOverlay.addEventListener('click', e => { if (e.target === nqGuideOverlay) nqGuideOverlay.classList.remove('open'); });
 </script>
 </body>
 </html>

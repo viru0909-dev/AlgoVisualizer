@@ -117,13 +117,13 @@
     .algo-badge.tc { background-color: #f1f5f9; color: #475569; }
     .algo-badge.sc { background-color: #f0fdfa; color: #0d9488; }
     
-    /* Code Execution Split Screen Layout */
+    /* ── Layout ── */
+    html, body { overflow: hidden; height: 100%; }
     #workspace-container {
       display: flex;
       flex-direction: row;
       width: 100%;
-      align-items: flex-start;
-      height: calc(100vh - 55px);
+      height: calc(100vh - 50px);
       transition: all 0.3s ease;
       overflow: hidden;
     }
@@ -135,11 +135,18 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-y: auto;
+      overflow: hidden;
     }
     #workspace-container.active-split #main-visualizer {
       width: 70%;
     }
+    /* Constrain the board so it fits viewport */
+    #board {
+      max-height: calc(100vh - 130px);
+      overflow: hidden;
+      display: block;
+    }
+    #board td { width: 22px !important; height: 22px !important; }
     #code-panel {
       width: 0%;
       height: 100%;
@@ -245,20 +252,37 @@
       transform: scale(1.1);
     }
     #mainText {
-      padding: 12px 0 !important;
+      padding: 8px 0 !important;
       background-color: #f8fafc;
       border-bottom: 1px solid #e2e8f0;
+      width: 100%;
+      flex-shrink: 0;
     }
     .legend-item {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 13px;
+      font-size: 12px;
     }
     .legend-box {
-      width: 18px !important;
-      height: 18px !important;
-      border-radius: 4px;
+      width: 14px !important;
+      height: 14px !important;
+      border-radius: 3px;
+    }
+    /* Dynamic header pill */
+    #algo-active-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #10b981;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 99px;
+      margin-left: 10px;
+      transition: all 0.3s;
+      white-space: nowrap;
     }
   </style>
     <link rel="shortcut icon" type="image/png" href="public/styling/c_icon.png"/>
@@ -308,20 +332,35 @@
         </ul>
       </li>
       <li style="display: flex; align-items: center; padding-left: 15px;">
-        <span style="color: #cbd5e1; margin-right: 12px; font-weight: 600;">Speed:</span>
+        <span style="color: #cbd5e1; margin-right: 10px; font-weight: 600; font-size:13px;">Speed:</span>
         <div class="speed-pill-container" id="speedDisplay">
-          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedSlow" title="Slow" style="background-color: transparent; border-radius: 9999px;">🐢</button>
-          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedAverage" title="Average" style="background-color: transparent; border-radius: 9999px;">🏃</button>
-          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedFast" title="Fast" style="background-color: #e2e8f0; border-radius: 9999px;">⚡</button>
+          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedSlow" title="Slow" style="background-color: transparent; border-radius: 9999px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#94a3b8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
+          </button>
+          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedAverage" title="Average" style="background-color: transparent; border-radius: 9999px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#94a3b8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </button>
+          <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedFast" title="Fast" style="background-color: #e2e8f0; border-radius: 9999px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#1e293b"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </button>
         </div>
         <span id="adjustSpeed" style="display:none;"></span>
       </li>
-      <li style="display: flex; align-items: center; padding-left: 20px;">
-        <button id="toggleCodePanelBtn" style="background-color: #334155; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 13px; transition: background-color 0.2s;">&lt;/&gt; Code Tracker</button>
+      <li style="display: flex; align-items: center; padding-left: 16px;">
+        <button id="toggleCodePanelBtn" style="background-color: #334155; color: white; border: none; padding: 5px 13px; border-radius: 6px; font-weight: 600; font-size: 12px; transition: background-color 0.2s; display:inline-flex; align-items:center; gap:5px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Code Tracker
+        </button>
       </li>
-      <li style="display: flex; align-items: center; padding-left: 8px; gap: 4px;">
-        <a href="/nqueens" style="background: #334155; color: #cbd5e1; padding: 5px 13px; border-radius: 6px; font-weight: 600; font-size: 13px; text-decoration: none; transition: all 0.2s;">♛ N-Queens</a>
-        <a href="/sorting" style="background: #334155; color: #cbd5e1; padding: 5px 13px; border-radius: 6px; font-weight: 600; font-size: 13px; text-decoration: none; transition: all 0.2s;">📊 Sorting</a>
+      <li style="display: flex; align-items: center; padding-left: 6px; gap: 4px;">
+        <a href="/nqueens" style="background: #334155; color: #cbd5e1; padding: 4px 11px; border-radius: 6px; font-weight: 600; font-size: 12px; text-decoration: none; transition: all 0.2s; display:inline-flex; align-items:center; gap:5px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          N-Queens
+        </a>
+        <a href="/sorting" style="background: #334155; color: #cbd5e1; padding: 4px 11px; border-radius: 6px; font-weight: 600; font-size: 12px; text-decoration: none; transition: all 0.2s; display:inline-flex; align-items:center; gap:5px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Sorting
+        </a>
       </li>
          </ul>
        </div>
@@ -357,7 +396,7 @@
       <div id="main-visualizer">
         <div id='mainText' style="width: 100%; margin-bottom: 20px;">
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-          <div id="algorithmDescriptor" style="font-size: 14px; font-weight: 600; color: #475569; padding: 0; margin-bottom: 10px; border: none; text-align: center; width: 100%;">Pick an algorithm and visualize it!</div>
+          <div id="algorithmDescriptor" style="font-size: 13px; font-weight: 600; color: #475569; padding: 0; margin-bottom: 6px; border: none; text-align: center; width: 100%; display:flex; align-items:center; justify-content:center; gap:8px;">Pick an algorithm and visualize it! <span id="algo-active-badge" style="display:none;"></span></div>
           <ul style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; gap: 1.5rem; margin: 0; padding: 0; list-style: none;">
             <li class="legend-item"><div class="start legend-box"></div><span style="color: #334155; font-weight: 500;">Start Node</span></li>
             <li class="legend-item"><div class="target legend-box"></div><span style="color: #334155; font-weight: 500;">Target Node</span></li>
@@ -478,6 +517,20 @@
           
           el.addEventListener('mouseleave', () => {
             card.classList.remove('visible');
+          });
+        }
+      });
+      // Dynamic header badge — show selected algorithm
+      const badge = document.getElementById('algo-active-badge');
+      Object.keys(algoData).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('click', () => {
+            if (badge) {
+              badge.textContent = algoData[id].title;
+              badge.style.display = 'inline-flex';
+            }
+            document.getElementById('algorithmDescriptor').childNodes[0].textContent = '';
           });
         }
       });
