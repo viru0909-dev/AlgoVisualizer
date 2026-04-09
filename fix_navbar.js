@@ -1,8 +1,15 @@
 const fs = require('fs');
-let text = fs.readFileSync('/Users/virendragadekar/Desktop/AlgoVisualizer/index.html', 'utf8');
-let lines = text.split('\n');
+let html = fs.readFileSync('index.html', 'utf8');
 
-let newLines = `<div id='navbarDiv'>
+let startIndex = html.indexOf("<div id='navbarDiv'>");
+let endToken = "     </nav>\n   </div>";
+let endIndex = html.indexOf(endToken, startIndex);
+
+if(startIndex > -1 && endIndex > -1) {
+  let toReplace = html.substring(startIndex, endIndex + endToken.length);
+  // Just to be sure, check if the string contains the old specific logic
+  if(toReplace.includes('algorithms')) {
+    let replacement = `<div id='navbarDiv'>
   <nav class="navbar navbar-inverse" style="z-index:101; position:relative;">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -90,10 +97,13 @@ let newLines = `<div id='navbarDiv'>
        <span id="adjustSpeed" style="display:none;"></span>
      </div>
   </div>
-</div>`.split('\n');
-
-// Lines are 1-indexed, but array is 0-indexed.
-// So lines 297 to 356 corresponds to index 296 to 355
-lines.splice(296, 60, ...newLines);
-fs.writeFileSync('/Users/virendragadekar/Desktop/AlgoVisualizer/index.html', lines.join('\n'));
-console.log('Successfully replaced lines');
+</div>`;
+    
+    html = html.substring(0, startIndex) + replacement + html.substring(endIndex + endToken.length);
+    fs.writeFileSync('index.html', html);
+    console.log("Successfully fixed the entire navbar region.");
+  }
+} else {
+  console.log("Could not find start or end bounds.");
+  console.log(startIndex, endIndex);
+}

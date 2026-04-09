@@ -1,8 +1,8 @@
 const fs = require('fs');
-let html = fs.readFileSync('/Users/virendragadekar/Desktop/AlgoVisualizer/index.html', 'utf8');
 
-let newHTML = `<div id='navbarDiv'>
-  <nav class="navbar navbar-inverse" style="z-index:101; position:relative;">
+let html = fs.readFileSync('index.html', 'utf8');
+
+let newLayout = `<nav class="navbar navbar-inverse" style="z-index:101; position:relative;">
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="/" id="refreshButton">algoVisualizer</a>
@@ -20,14 +20,16 @@ let newHTML = `<div id='navbarDiv'>
           </button>
         </li>
         <li style="display:flex;align-items:center;">
-          <button id="toggleCodePanelBtn" style="background:#334155;color:#fff;border:none;padding:5px 13px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:background .2s;font-family:'Inter',sans-serif;">&lt;/&gt; Code Tracker</button>
+          <button id="toggleCodePanelBtn" style="background:#334155;color:#fff;border:none;padding:5px 13px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:background .2s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:5px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Code Tracker
+          </button>
         </li>
       </ul>
     </div>
   </nav>
 
   <div id="ctrl-bar">
-    <label>Algorithms:</label>
      <div class="dropdown">
        <button class="ctrl-select dropdown-toggle" data-toggle="dropdown" style="display:inline-flex; align-items:center; gap:5px;">Algorithms <span class="caret"></span></button>
        <ul class="dropdown-menu">
@@ -54,11 +56,11 @@ let newHTML = `<div id='navbarDiv'>
        </ul>
      </div>
 
-     <button id='startButtonAddObject' class="sm-btn" style="background:#059669; color:#fff;">Add Bomb</button>
+     <button id='startButtonAddObject' class="sm-btn" style="background:#334155; color:#f8fafc;">Add Bomb</button>
 
      <div class="ctrl-sep"></div>
 
-     <button id="actualStartButton" class="sm-btn" type="button" style="background:#059669!important;color:#fff!important;font-weight:700!important;padding:6px 20px!important;transition:all .2s ease!important;box-shadow:0 4px 10px rgba(5,150,105,.35)!important;font-size:13px;">Visualize!</button>
+     <button id="actualStartButton" class="sm-btn" type="button" style="background:#059669!important;color:#fff!important;font-weight:700!important;padding:6px 20px!important;transition:all .2s ease!important;box-shadow:0 4px 10px rgba(5,150,105,.35)!important;font-size:13px;display:inline-flex;align-items:center;gap:6px;"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!</button>
 
      <div class="ctrl-sep"></div>
 
@@ -86,17 +88,21 @@ let newHTML = `<div id='navbarDiv'>
        </div>
        <span id="adjustSpeed" style="display:none;"></span>
      </div>
-  </div>
-</div>`;
+  </div>`;
 
-let startIndex = html.indexOf("<div id='navbarDiv'>");
-let endStr = "</nav>\n    </div>";
-let endIndex = html.indexOf(endStr, startIndex);
+// Delete the old nav code
+let divStart = html.indexOf("<div id='navbarDiv'>");
+let nextDivEnd = html.indexOf("</nav>", divStart);
+let finalEnd = html.indexOf("</div>", nextDivEnd) + 6; // To cover </div>
 
-if (startIndex > -1 && endIndex > -1) {
-  html = html.substring(0, startIndex) + newHTML + html.substring(endIndex + endStr.length);
-  fs.writeFileSync('/Users/virendragadekar/Desktop/AlgoVisualizer/index.html', html);
-  console.log("Success");
+if (divStart !== -1 && finalEnd !== -1) {
+    let before = html.substring(0, divStart);
+    let after = html.substring(finalEnd);
+    let newHtml = before + "<div id='navbarDiv'>\n  " + newLayout + "\n</div>" + after;
+    // Also patch the workspace-container height
+    newHtml = newHtml.replace("height: calc(100vh - 50px);", "height: calc(100vh - 52px - 52px);");
+    fs.writeFileSync('index.html', newHtml);
+    console.log("Navbar fix applied successfully.");
 } else {
-  console.log("Failed to find bounds.");
+    console.log("Could not find start/end.");
 }

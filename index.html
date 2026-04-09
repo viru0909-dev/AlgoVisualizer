@@ -5,24 +5,36 @@
     <link rel="stylesheet" href="public/styling/cssBasic.css">
   <style>
     /* UI/UX Polish Overrides */
-    .navbar-inverse{background-color:#1e293b;border-color:transparent;margin-bottom:0!important;}
-    .navbar-inverse .navbar-brand{color:#f8fafc!important;font-weight:700;letter-spacing:.5px;}
-    .navbar .container-fluid{display:flex;align-items:center;padding:0 20px;}
-    .nav.navbar-nav{display:flex;align-items:center;flex-direction:row;margin:0;gap:4px;}
-    .nav-mode-tab{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s;color:#cbd5e1;}
-    .nav-mode-tab:hover{color:#fff;background:rgba(255,255,255,.08);}
-    .nav-mode-tab.active{background:#10b981;color:#fff!important;}
-
-    /* ── CONTROLS BAR ── */
-    #ctrl-bar{background:#1e293b;border-top:1px solid #334155;border-bottom:1px solid #334155;padding:0 24px;display:flex;align-items:center;height:52px;gap:1.5rem;flex-wrap:nowrap;position:relative;z-index:100;}
-    #ctrl-bar label{color:#cbd5e1;font-weight:600;font-size:13px;white-space:nowrap;}
-    .ctrl-select{background:#334155;color:#f8fafc;border:1px solid #475569;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;outline:none;cursor:pointer;height:30px;}
-    .ctrl-sep{width:1px;height:24px;background:#334155;flex-shrink:0;}
-
-    /* Buttons */
-    .ctrl-btn-icon{width:14px;height:14px;flex-shrink:0;vertical-align:middle;position:relative;top:-1px;}
-    .sm-btn{background:#334155;color:#f8fafc;border:none;padding:5px 14px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s ease;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;}
-    .sm-btn:hover{background:#475569;transform:translateY(-1px);}
+    .navbar-inverse {
+      background-color: #1e293b;
+      border-color: transparent;
+      margin-bottom: 0px !important;
+    }
+    .navbar-inverse .navbar-brand {
+      color: #f8fafc;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .navbar .container-fluid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+    .nav.navbar-nav {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      margin: 0;
+    }
+    .nav.navbar-nav > li > a {
+      color: #cbd5e1;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav.navbar-nav > li > a:hover {
+      color: white;
+    }
     .dropdown-menu {
       background-color: #ffffff !important;
       padding: 0 !important;
@@ -105,6 +117,18 @@
     .algo-badge.tc { background-color: #f1f5f9; color: #475569; }
     .algo-badge.sc { background-color: #f0fdfa; color: #0d9488; }
     
+    /* ── CONTROLS BAR ── */
+    .nav-mode-tab{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s;color:#cbd5e1;}
+    .nav-mode-tab:hover{color:#fff;background:rgba(255,255,255,.08);}
+    .nav-mode-tab.active{background:#10b981;color:#fff!important;}
+    #ctrl-bar{background:#1e293b;border-bottom:1px solid #334155;padding:0 24px;display:flex;align-items:center;height:52px;gap:1.5rem;flex-wrap:nowrap;position:relative;z-index:100;white-space:nowrap;}
+    #ctrl-bar label{color:#cbd5e1;font-weight:600;font-size:13px;white-space:nowrap;margin:0;}
+    .ctrl-select{background:#334155;color:#f8fafc;border:1px solid #475569;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;outline:none;cursor:pointer;height:30px;}
+    .ctrl-sep{width:1px;height:24px;background:#334155;flex-shrink:0;}
+    .ctrl-btn-icon{width:14px;height:14px;flex-shrink:0;vertical-align:middle;position:relative;top:-1px;}
+    .sm-btn{background:#334155;color:#f8fafc;border:1px solid #475569;padding:4px 14px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;outline:none;cursor:pointer;height:30px;transition:all 0.2s ease;}
+    .sm-btn:hover{background:#475569;}
+
     /* ── Layout ── */
     html, body { overflow: hidden; height: 100%; }
     #workspace-container {
@@ -277,24 +301,6 @@
   </head>
   <body>
     <div id='navbarDiv'>
-     <nav class="navbar navbar-inverse">
-       <div class="container-fluid">
-         <div class="navbar-header">
-           <a id="refreshButton" class="navbar-brand" href="#">algoVisualizer</a>
-         </div>
-         <ul class="nav navbar-nav">
-           <li class="dropdown">
-             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Algorithms
-             <span class="caret"></span></a>
-             <ul class="dropdown-menu">
-               <li id='startButtonDijkstra'><a href="#">Dijkstra's Algorithm</a></li>
-               <li id='startButtonAStar2'><a href="#">A* Search</a></li>
-               <li id='startButtonGreedy'><a href="#">Greedy Best-first Search</a></li>
-               <li id='startButtonAStar'><a href="#">Swarm Algorithm</a></li>
-               <li id='startButtonAStar3'><a href="#">Convergent Swarm Algorithm</a></li>
-               <li id='startButtonBidirectional'><a href="#">Bidirectional Swarm Algorithm</a></li>
-               <li id='startButtonBFS'><a href="#">Breadth-first Search</a></li>
-<div id='navbarDiv'>
   <nav class="navbar navbar-inverse" style="z-index:101; position:relative;">
     <div class="container-fluid">
       <div class="navbar-header">
