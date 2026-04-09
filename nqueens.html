@@ -359,9 +359,9 @@
     #nq-panel {
       width: 30%;
       flex-shrink: 0;
-      background: #1a1d24;
-      border-left: 1px solid #2d3340;
-      box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+      background: #ffffff;
+      border-left: 1px solid #e2e8f0;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.05);
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -370,7 +370,7 @@
     }
     #nq-panel::-webkit-scrollbar { display: none; }
     .panel-section {
-      border-bottom: 1px solid #2d3340;
+      border-bottom: 1px solid #e2e8f0;
       padding: 14px 16px;
     }
     .panel-title {
@@ -479,23 +479,23 @@
       overflow: hidden;
       cursor: pointer;
       transition: all 0.15s;
-      border: 2px solid #2d3340;
+      border: 2px solid #e2e8f0;
     }
     .mini-board:hover { transform: scale(1.05); border-color: #10b981; }
-    .mini-board.selected { border-color: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+    .mini-board.selected { border-color: #059669; box-shadow: 0 0 8px rgba(16,185,129,0.3); }
     .mc { aspect-ratio: 1; }
-    .mc.ml { background: #e8d5a8; }
-    .mc.md { background: #a07850; }
-    .mc.mq { background: #fbbf24 !important; border-radius: 50%; transform: scale(0.55); }
+    .mc.ml { background: #f0d9b5; }
+    .mc.md { background: #b58863; }
+    .mc.mq { background: #fbbf24 !important; border-radius: 50%; transform: scale(0.55); filter: drop-shadow(0 2px 2px rgba(0,0,0,0.4)); }
     .gallery-empty {
-      color: #475569; font-size: 12px; font-style: italic;
+      color: #64748b; font-size: 12px; font-style: italic;
       text-align: center; padding: 24px 8px;
       grid-column: 1 / -1;
     }
     .gallery-meta {
-      font-size: 11px; color: #64748b; font-weight: 600;
+      font-size: 11px; color: #475569; font-weight: 600;
       text-align: center; padding: 6px 8px;
-      border-top: 1px solid #2d3340;
+      border-top: 1px solid #e2e8f0;
     }
 
     /* ── RESPONSIVE ──────────────────────────────────── */
@@ -511,8 +511,12 @@
       display: flex !important;
       flex-direction: column !important;
     }
-    .panel-top { flex: 7; display: flex; flex-direction: column; overflow: hidden; border-bottom: 2px solid #10b981; }
-    .panel-bottom { flex: 3; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+    .panel-top { display: none; height: 0; background: #1a1d24; flex-direction: column; overflow: hidden; border-bottom: 2px solid #10b981; }
+    .panel-bottom { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+    
+    #nq-panel.active-code .panel-top { display: flex; flex: 1; height: 50%; }
+    #nq-panel.active-code .panel-bottom { flex: 1; height: 50%; }
+
     .code-block {
       flex: 1;
       overflow-y: auto;
@@ -605,7 +609,11 @@
     </ul>
     <ul class="nav navbar-nav" style="margin-left:auto;gap:8px;">
       <li style="display:flex;align-items:center;">
-        <button id="nq-help-btn" style="background:#334155;color:#cbd5e1;border:none;padding:4px 11px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;">
+        <button id="toggleCodePanelBtn" style="background:#334155;color:#f8fafc;border:none;padding:5px 12px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;margin-right:8px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Code Tracker
+        </button>
+        <button id="nq-help-btn" style="background:transparent;border:1px solid #475569;color:#cbd5e1;padding:4px 11px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           How to Use
         </button>
@@ -631,12 +639,13 @@
   </select>
 
   <!-- Speed -->
-  <label>Speed:</label>
-  <div class="speed-slider-wrap">
-    <span>Slow</span>
-    <input type="range" id="nq-speed-slider" min="1" max="100" value="70" style="--p:70%">
-    <span>Fast</span>
-  </div>
+  <label for="nq-speed-select" style="margin-left:12px;">Speed:</label>
+  <select id="nq-speed-select" class="ctrl-select">
+    <option value="50">Fast</option>
+    <option value="150" selected>Average</option>
+    <option value="400">Slow</option>
+    <option value="custom">Custom (ms)</option>
+  </select>
 
   <!-- Action buttons -->
   <button id="nq-start-btn" type="button"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!</button>
@@ -785,9 +794,11 @@
 const TOTALS = {1:1,2:0,3:0,4:2,5:10,6:4,7:40,8:92,9:352,10:724,11:2680,12:14200};
 
 function nqGetDelay() {
-  const v = parseInt(document.getElementById('nq-speed-slider').value); // 1–100
-  // v=1 → ~400ms (slow), v=100 → ~1ms (fast)
-  return Math.max(1, Math.round(400 / Math.pow(v / 10, 1.8) + 1));
+  const select = document.getElementById('nq-speed-select');
+  if (select && select.value && select.value !== 'custom') {
+    return parseInt(select.value) || 150;
+  }
+  return viz.speed || 150;
 }
 
 class NQueens {
@@ -1088,11 +1099,34 @@ document.getElementById('boardSize').addEventListener('change', e => viz.init(+e
 document.getElementById('nq-start-btn').addEventListener('click', () => viz.togglePlay());
 document.getElementById('nq-step-btn').addEventListener('click', () => viz.stepForward());
 document.getElementById('nq-reset-btn').addEventListener('click', () => viz.reset());
-// Speed slider — updates fill gradient and animation speed live
-const nqSlider = document.getElementById('nq-speed-slider');
-nqSlider.addEventListener('input', () => {
-  const pct = ((nqSlider.value - 1) / 99 * 100).toFixed(0);
-  nqSlider.style.setProperty('--p', pct + '%');
+
+// Toggle Code Tracker Panel
+document.getElementById('toggleCodePanelBtn').addEventListener('click', () => {
+  document.getElementById('nq-panel').classList.toggle('active-code');
+});
+
+// Speed Select logic
+const speedSelect = document.getElementById('nq-speed-select');
+speedSelect.addEventListener('change', (e) => {
+  if (e.target.value === 'custom') {
+    const val = prompt("Enter speed in milliseconds (e.g. 50):", "150");
+    if (val && !isNaN(val) && parseInt(val) > 0) {
+      viz.speed = parseInt(val);
+      let opt = Array.from(speedSelect.options).find(o => o.value == val);
+      if(!opt) {
+        let newOpt = document.createElement('option');
+        newOpt.value = val;
+        newOpt.textContent = val + " ms";
+        speedSelect.insertBefore(newOpt, speedSelect.querySelector('option[value="custom"]'));
+      }
+      speedSelect.value = val;
+    } else {
+      speedSelect.value = "150";
+      viz.speed = 150;
+    }
+  } else {
+    viz.speed = parseInt(e.target.value);
+  }
 });
 
 /* Keyboard: Space = play/pause, → = step, R = reset */
