@@ -19,10 +19,11 @@
     .navbar-inverse {
       background-color: #1e293b;
       border-color: transparent;
-      margin-bottom: 0 !important;
+      margin-bottom: 0px !important;
+      border-radius: 0;
     }
     .navbar-inverse .navbar-brand {
-      color: #f8fafc !important;
+      color: #f8fafc;
       font-weight: 700;
       letter-spacing: 0.5px;
     }
@@ -592,15 +593,23 @@
 <body>
 
 <!-- ════════════════ NAVBAR ════════════════ -->
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse" style="z-index:101; position:relative;">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="/">algoVisualizer</a>
     </div>
-    <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav" style="gap:4px;">
       <li><a href="/"        class="nav-page-tab other"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Pathfinding</a></li>
       <li><a href="/nqueens" class="nav-page-tab active-tab"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> N-Queens</a></li>
       <li><a href="/sorting" class="nav-page-tab other"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Sorting</a></li>
+    </ul>
+    <ul class="nav navbar-nav" style="margin-left:auto;gap:8px;">
+      <li style="display:flex;align-items:center;">
+        <button id="nq-help-btn" style="background:#334155;color:#cbd5e1;border:none;padding:4px 11px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          How to Use
+        </button>
+      </li>
     </ul>
   </div>
 </nav>
@@ -634,11 +643,6 @@
   <button id="nq-step-btn"  class="nq-btn-sm"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,4 15,12 5,20" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg> Step</button>
   <button id="nq-reset-btn" class="nq-btn-sm"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Reset</button>
 
-  <!-- Help button -->
-  <button id="nq-help-btn" class="nq-btn-sm" title="How to Use" style="margin-left:auto;">
-    <svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    How to Use
-  </button>
 
   <!-- Status -->
   <span id="nq-status"><span class="dot"></span>Ready</span>

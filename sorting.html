@@ -10,7 +10,7 @@
     body{font-family:'Inter',sans-serif;background:#f8fafc;overflow:hidden;}
 
     /* ── NAVBAR ── */
-    .navbar-inverse{background-color:#1e293b;border-color:transparent;margin-bottom:0!important;}
+    .navbar-inverse{background-color:#1e293b;border-color:transparent;margin-bottom:0!important;border-radius:0;}
     .navbar-inverse .navbar-brand{color:#f8fafc!important;font-weight:700;letter-spacing:.5px;}
     .navbar .container-fluid{display:flex;align-items:center;padding:0 20px;}
     .nav.navbar-nav{display:flex;align-items:center;flex-direction:row;margin:0;gap:4px;}
@@ -122,7 +122,7 @@
 <body>
 
 <!-- ══════════════ NAVBAR ══════════════ -->
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse" style="z-index:101; position:relative;">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="/">algoVisualizer</a>
@@ -140,7 +140,10 @@
         </button>
       </li>
       <li style="display:flex;align-items:center;">
-        <button id="toggleCodePanelBtn">&lt;/&gt; Code Tracker</button>
+        <button id="toggleCodePanelBtn" style="background:#334155;color:#fff;border:none;padding:5px 13px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:background .2s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:5px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Code Tracker
+        </button>
       </li>
     </ul>
   </div>

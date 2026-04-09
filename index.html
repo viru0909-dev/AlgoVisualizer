@@ -9,6 +9,7 @@
       background-color: #1e293b;
       border-color: transparent;
       margin-bottom: 0px !important;
+      border-radius: 0;
     }
     .navbar-inverse .navbar-brand {
       color: #f8fafc;
@@ -358,9 +359,9 @@
      <button id='startButtonAddObject' class="sm-btn" style="background:#334155; color:#f8fafc;">Add Bomb</button>
 
      <div class="ctrl-sep"></div>
-
-     <button id="actualStartButton" class="sm-btn" type="button" style="background:#059669!important;color:#fff!important;font-weight:700!important;padding:6px 20px!important;transition:all .2s ease!important;box-shadow:0 4px 10px rgba(5,150,105,.35)!important;font-size:13px;display:inline-flex;align-items:center;gap:6px;"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!</button>
-
+     <div id="startButtonStart" style="display:inline-block;">
+       <button id="actualStartButton" class="sm-btn" type="button" style="background:#059669!important;color:#fff!important;font-weight:700!important;padding:6px 20px!important;transition:all .2s ease!important;box-shadow:0 4px 10px rgba(5,150,105,.35)!important;font-size:13px;display:inline-flex;align-items:center;gap:6px;"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!</button>
+     </div>
      <div class="ctrl-sep"></div>
 
      <div class="dropdown">
@@ -389,7 +390,7 @@
      </div>
   </div>
 </div>
-    <div id="tutorial">
+    <div id="tutorial" style="display: none;">
       <h3>Welcome to algoVisualizer!</h3>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 25px 0;">
         <div style="position: relative; display: inline-block;">
@@ -640,6 +641,15 @@
         toggleBtn.addEventListener('click', (e) => {
           e.preventDefault();
           window.toggleSplitScreen();
+        });
+      }
+
+      const helpBtn = document.getElementById('path-help-btn');
+      if (helpBtn) {
+        helpBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const tut = document.getElementById('tutorial');
+          if (tut) tut.style.display = tut.style.display === 'none' ? 'block' : 'none';
         });
       }
 
