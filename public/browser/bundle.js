@@ -371,6 +371,7 @@ Board.prototype.initialise = function() {
   this.createGrid();
   this.addEventListeners();
   this.toggleTutorialButtons();
+  this.toggleButtons();
 };
 
 Board.prototype.createGrid = function() {
