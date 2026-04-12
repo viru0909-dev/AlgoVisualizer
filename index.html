@@ -4,17 +4,22 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="public/styling/cssBasic.css">
   <style>
-    /* UI/UX Polish Overrides */
+    /* ════════════════════════════════════════════
+       PREMIUM UI OVERHAUL — algoVisualizer
+       Inspired by Linear / Vercel / Raycast
+    ════════════════════════════════════════════ */
+
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { overflow: hidden; height: 100%; margin: 0; padding: 0; }
+
+    /* ── Section 1: Navbar — Light Theme ── */
     .navbar-inverse {
-      background-color: #1e293b;
-      border-color: transparent;
-      margin-bottom: 0px !important;
-      border-radius: 0;
-    }
-    .navbar-inverse .navbar-brand {
-      color: #f8fafc;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+      background: #0f172a !important;
+      border-bottom: 1px solid #1e293b !important;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.05) !important;
+      border-radius: 0 !important;
+      margin-bottom: 0 !important;
     }
     .navbar .container-fluid {
       display: flex;
@@ -22,63 +27,643 @@
       justify-content: space-between;
       padding: 0 20px;
     }
+    .navbar-brand {
+      padding: 0;
+      line-height: 52px;
+      display: flex;
+      align-items: center;
+    }
+    /* Nav tabs */
     .nav.navbar-nav {
       display: flex;
       align-items: center;
       flex-direction: row;
       margin: 0;
     }
-    .nav.navbar-nav > li > a {
-      color: #cbd5e1;
-      font-weight: 500;
+    .nav-mode-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
       transition: all 0.2s;
+      color: #64748b;
+      border: 1px solid transparent;
+      border-bottom: none;
     }
-    .nav.navbar-nav > li > a:hover {
-      color: white;
+    .nav-mode-tab:hover {
+      color: #94a3b8;
+      text-decoration: none;
     }
+    .nav-mode-tab.active {
+      background: rgba(16,185,129,0.1) !important;
+      color: #10b981 !important;
+      border-radius: 6px !important;
+      border: 1px solid rgba(16,185,129,0.2) !important;
+    }
+    /* Ghost buttons in navbar */
+    #path-help-btn, #toggleCodePanelBtn {
+      background: transparent !important;
+      border: 1px solid #334155 !important;
+      color: #94a3b8 !important;
+      padding: 4px 12px !important;
+      border-radius: 6px !important;
+      font-weight: 600 !important;
+      font-size: 12px !important;
+      cursor: pointer !important;
+      transition: border-color 0.2s, color 0.2s !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+    }
+    #path-help-btn:hover, #toggleCodePanelBtn:hover {
+      border-color: #475569 !important;
+      color: #e2e8f0 !important;
+    }
+
+    /* ── Section 2: Controls Bar ── */
+    #ctrl-bar {
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      height: 48px;
+      gap: 1.5rem;
+      flex-wrap: nowrap;
+      position: relative;
+      z-index: 100;
+      white-space: nowrap;
+    }
+    #ctrl-bar label { color: #94a3b8; font-weight: 600; font-size: 13px; white-space: nowrap; margin: 0; }
+    .ctrl-sep { width: 1px; height: 24px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+    .ctrl-btn-icon { width: 14px; height: 14px; flex-shrink: 0; vertical-align: middle; position: relative; top: -1px; }
+    /* Dropdown trigger buttons */
+    .ctrl-select {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      height: 30px;
+      transition: border-color 0.2s;
+    }
+    .ctrl-select:hover { border-color: #475569; }
+    /* Dark dropdown menu */
     .dropdown-menu {
-      background-color: #ffffff !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      border-radius: 8px !important;
-      overflow: hidden !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+      background: #1e293b !important;
+      border: 1px solid #334155 !important;
+      border-radius: 10px !important;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+      padding: 4px !important;
       min-width: 220px !important;
-      border: none !important;
+      overflow: hidden !important;
+      margin-top: 4px !important;
     }
     .dropdown-menu > li {
-      background-color: transparent !important;
+      background: transparent !important;
       padding: 0 !important;
       margin: 0 !important;
-      width: 100% !important;
-      display: block !important;
       border: none !important;
+      border-radius: 6px !important;
+      overflow: hidden !important;
     }
     .dropdown-menu > li > a {
       display: block !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      padding: 12px 16px !important;
-      color: #333333 !important;
-      text-align: left !important;
+      padding: 10px 16px !important;
+      color: #e2e8f0 !important;
+      font-weight: 500 !important;
+      font-size: 13px !important;
       text-decoration: none !important;
-      background-color: transparent !important;
-      font-weight: 600 !important;
-      transition: background-color 0.2s ease, color 0.2s ease !important;
+      border-radius: 6px !important;
+      transition: background 0.15s, color 0.15s !important;
     }
     .dropdown-menu > li > a:hover {
-      background-color: #10b981 !important;
-      color: #ffffff !important;
+      background: rgba(16,185,129,0.12) !important;
+      color: #10b981 !important;
     }
+    /* Add Bomb button */
+    #startButtonAddObject {
+      background: transparent !important;
+      border: 1px solid #334155 !important;
+      color: #94a3b8 !important;
+      padding: 4px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      height: 30px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #startButtonAddObject:hover { border-color: #475569 !important; color: #e2e8f0 !important; }
+    /* Visualize! button — shimmer */
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position:  200% center; }
+    }
+    #actualStartButton {
+      background: linear-gradient(90deg, #059669, #10b981, #34d399, #10b981, #059669) !important;
+      background-size: 300% auto !important;
+      animation: shimmer 3s linear infinite !important;
+      border: none !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+      border-radius: 6px !important;
+      padding: 6px 20px !important;
+      font-size: 13px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      box-shadow: 0 4px 14px rgba(16,185,129,0.4) !important;
+      transition: transform 0.2s, box-shadow 0.2s !important;
+      cursor: pointer;
+    }
+    #actualStartButton:hover {
+      animation-duration: 0.8s !important;
+      transform: scale(1.03) !important;
+      box-shadow: 0 6px 20px rgba(16,185,129,0.55) !important;
+    }
+    /* Algo badge */
+    #algo-active-badge {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      border: 1px solid #334155;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 6px;
+      margin-left: 4px;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      white-space: nowrap;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #algo-active-badge.selected {
+      background: rgba(16,185,129,0.06);
+      border-color: #10b981;
+      color: #10b981;
+    }
+    .sm-btn {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      padding: 4px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      height: 30px;
+      transition: border-color 0.2s;
+    }
+    .sm-btn:hover { border-color: #475569; }
+    /* Speed buttons */
+    .speed-pill-container {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 3px;
+      display: inline-flex;
+      gap: 2px;
+      align-items: center;
+    }
+    .speed-pill-btn {
+      width: 28px !important;
+      height: 28px !important;
+      border-radius: 6px !important;
+      border: none !important;
+      background: transparent !important;
+      color: #475569 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      padding: 0 !important;
+      transition: all 0.2s !important;
+    }
+    .speed-pill-btn:hover { opacity: 0.8; }
+    .speed-pill-btn.speed-active {
+      background: #334155 !important;
+      color: #e2e8f0 !important;
+    }
+    .speed-pill-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+
+    /* ── Section 3: Legend strip — PERMANENT SINGLE ROW ── */
+    #mainText {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      width: 100% !important;
+      padding: 5px 20px !important;
+      margin: 0 !important;
+      background: #f8fafc !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      flex-shrink: 0 !important;
+      box-sizing: border-box !important;
+      min-height: 60px !important;
+    }
+    #algorithmDescriptor {
+      display: block !important;
+      text-align: center !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      color: #475569 !important;
+      padding: 4px 0 2px 0 !important;
+      width: 100% !important;
+      margin-bottom: 0 !important;
+      border: none !important;
+      background: none !important;
+    }
+    #mainText ul {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      justify-content: center !important;
+      list-style: none !important;
+      margin: 0 !important;
+      padding: 0 16px !important;
+      gap: 12px !important;
+      width: 100% !important;
+      overflow: hidden !important;
+      height: 28px !important;
+    }
+    #mainText li,
+    #mainText ul li,
+    #mainText ul li.legend-item,
+    #mainText ul li.bombBlock,
+    #mainText ul li.weightBlock {
+      display: inline-flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 5px !important;
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+      min-height: 0 !important;
+      max-height: 28px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      background: none !important;
+    }
+    #mainText li span, #mainText li * {
+      white-space: nowrap !important;
+      display: inline !important;
+      vertical-align: middle !important;
+      font-size: 11px !important;
+      line-height: 1 !important;
+    }
+    .legend-box {
+      display: inline-block !important;
+      width: 12px !important;
+      height: 12px !important;
+      border-radius: 2px !important;
+      flex-shrink: 0 !important;
+      vertical-align: middle !important;
+    }
+    #mainText ul li span { font-size: 11px !important; font-weight: 500 !important; color: #334155 !important; line-height: 1 !important; }
+    .legend-desc {
+      display: inline !important;
+      white-space: nowrap !important;
+      color: #94a3b8 !important;
+      font-size: 10px !important;
+      font-style: italic !important;
+      margin-left: 2px !important;
+    }
+    .no-desc .legend-desc { display: none !important; }
+
+    /* ── Section 4: Workspace Layout ── */
+    #workspace-container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      overflow: hidden;
+      flex: 1;
+    }
+    #main-visualizer {
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      transition: width 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      overflow: hidden;
+    }
+    #workspace-container.active-split #main-visualizer { width: 70%; }
+    #board { display: block; overflow: hidden; max-width: 100%; }
+    #board td { width: 22px !important; height: 22px !important; }
+    /* Drag handle */
+    #resize-handle {
+      width: 4px;
+      height: 100%;
+      background: rgba(255,255,255,0.06);
+      cursor: col-resize;
+      flex-shrink: 0;
+      transition: background 0.2s;
+      display: none;
+      position: relative;
+      z-index: 10;
+    }
+    #resize-handle:hover, #resize-handle.dragging { background: #10b981; }
+    #workspace-container.active-split #resize-handle { display: block; }
+
+    /* ── Section 5: Code Panel — Light Theme ── */
+    #code-panel {
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      overflow: hidden !important;
+      width: 0;
+      flex-shrink: 0;
+      position: relative;
+      background: #f8fafc;
+      border-left: 1px solid #e2e8f0;
+      transition: width 0.25s ease;
+    }
+    #workspace-container.active-split #code-panel {
+      width: 30%;
+    }
+    /* Code section */
+    .cp-code-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .code-panel-header {
+      background: #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .code-panel-content {
+      padding: 0.75rem 1rem;
+      overflow-x: hidden;
+      flex: 1 !important;
+      overflow-y: auto !important;
+      min-height: 0 !important;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,0,0,0.1) transparent;
+    }
+    /* Code lines */
+    #code-container {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      counter-reset: line;
+      color: #1e293b;
+    }
+    .code-line {
+      display: block;
+      padding: 2px 8px;
+      border-left: 2px solid transparent;
+      counter-increment: line;
+    }
+    .code-line::before {
+      content: counter(line);
+      display: inline-block;
+      width: 1.4rem;
+      margin-right: 1rem;
+      text-align: right;
+      color: #94a3b8;
+      font-size: 10px;
+      user-select: none;
+    }
+    .code-line.active-line {
+      background: rgba(16,185,129,0.1);
+      border-left: 2px solid #10b981;
+      color: #0f172a;
+      font-weight: 600;
+    }
+    .kw-purple { color: #7c3aed; font-weight: 600; }
+    .kw-green  { color: #059669; }
+    .kw-orange { color: #d97706; }
+    .kw-blue   { color: #3b82f6; }
+    /* Pill toggle */
+    .code-view-toggle {
+      display: inline-flex;
+      background: #e2e8f0;
+      border-radius: 6px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .code-view-btn {
+      border: none;
+      background: transparent;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .code-view-btn.active {
+      background: #10b981;
+      color: white;
+    }
+    /* Extracted var inspector & complexity chart */
+    .var-inspector {
+      flex-shrink: 0;
+      background: #f1f5f9;
+      border-top: 1px solid #e2e8f0;
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .var-inspector-header {
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .var-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .var-item {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 4px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .var-name { color: #64748b; font-size: 10px; }
+    .var-value { color: #0f172a; font-weight: 700; font-size: 12px; }
+    .var-value:not(.dash) { color: #10b981; }
+    .var-value.dash { color: #0f172a; }
+    
+    .complexity-section {
+      flex-shrink: 0;
+      height: 200px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+    }
+    .cp-section-header {
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+    .cp-chart-wrap {
+      flex: 1;
+      padding: 6px 8px 8px;
+      min-height: 0;
+      position: relative;
+    }
+    .cp-chart-wrap canvas { width: 100% !important; height: 100% !important; }
+    /* Chart legend */
+    #chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 16px 8px;
+      flex-shrink: 0;
+    }
+    .chart-dot-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #64748b;
+      cursor: default;
+    }
+    .chart-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .chart-dot-item.active { color: #10b981; }
+    .chart-dot-item.active .chart-dot { box-shadow: 0 0 0 2px rgba(16,185,129,0.3); }
+
+    /* ── Variable Bottom Strip ── */
+    #var-bottom-strip {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 36px;
+      background: rgba(15,23,42,0.97);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: none; /* shown when code panel open */
+      flex-direction: row;
+      align-items: center;
+      gap: 2rem;
+      padding: 0 20px;
+      z-index: 200;
+      overflow: hidden;
+    }
+    #workspace-container.active-split ~ #var-bottom-strip { display: flex; }
+    .vs-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .vs-name { color: rgba(255,255,255,0.35); }
+    .vs-val  { color: #fbbf24; font-weight: 700; }
+    @keyframes varFlash {
+      0%   { background: rgba(16,185,129,0.25); }
+      100% { background: transparent; }
+    }
+    .vs-item.flashing { animation: varFlash 0.35s ease-out forwards; border-radius: 4px; }
+
+    /* ── Section 6: Stats Bar ── */
+    #path-stats-bar {
+      position: fixed;
+      bottom: 36px; /* above the hidden bottom strip */
+      left: 0;
+      right: 0;
+      background: #f1f5f9;
+      border-top: 2px solid #e2e8f0;
+      padding: 8px 24px;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 300;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: #475569;
+    }
+    #path-stats-bar.visible { transform: translateY(0); }
+    #path-stats-bar .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+    #path-stats-bar .stat-val { font-weight: 700; font-size: 13px; text-transform: none; letter-spacing: 0; }
+    #path-stats-bar .stat-val.algo  { color: #0f172a; }
+    #path-stats-bar .stat-val.vis   { color: #3b82f6; }
+    #path-stats-bar .stat-val.path  { color: #10b981; }
+    #path-stats-bar .stat-val.good  { color: #10b981; }
+    #path-stats-bar .stat-val.bad   { color: #ef4444; }
+    #path-stats-bar .stat-dismiss {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      width: 26px; height: 26px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+    #path-stats-bar .stat-dismiss:hover { color: #475569; }
+
+    /* ── Section 7: Mobile ── */
+    @media (max-width: 768px) {
+      #workspace-container { flex-direction: column; }
+      #code-panel { width: 100% !important; height: 40vh !important; border-left: none !important; border-top: 1px solid rgba(255,255,255,0.1) !important; }
+      #main-visualizer { width: 100% !important; height: 60vh !important; }
+      #resize-handle { display: none !important; }
+      #ctrl-bar { overflow-x: auto; flex-wrap: nowrap; padding: 0 12px; gap: 0.75rem; }
+      #mainText ul { gap: 0.5rem !important; }
+      .no-desc .legend-desc { display: none !important; }
+      .legend-desc { display: none !important; }
+    }
+
+    /* ── Section 8: Algo Hover Card — Dark ── */
     #algo-hover-card {
       position: absolute;
       width: 300px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(15,23,42,0.97);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-radius: 12px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      border: 1px solid #e2e8f0;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
       padding: 16px;
       pointer-events: none;
       opacity: 0;
@@ -89,213 +674,23 @@
       flex-direction: column;
       gap: 10px;
     }
-    #algo-hover-card.visible {
-      opacity: 1;
-      transform: translateY(0) translateX(10px);
-    }
-    #algo-card-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0;
-    }
-    #algo-card-desc {
-      font-size: 13px;
-      color: #64748b;
-      margin: 0;
-      line-height: 1.4;
-    }
-    .algo-card-badges {
-      display: flex;
-      gap: 8px;
-    }
-    .algo-badge {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 99px;
-    }
-    .algo-badge.tc { background-color: #f1f5f9; color: #475569; }
-    .algo-badge.sc { background-color: #f0fdfa; color: #0d9488; }
-    
-    /* ── CONTROLS BAR ── */
-    .nav-mode-tab{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s;color:#cbd5e1;}
-    .nav-mode-tab:hover{color:#fff;background:rgba(255,255,255,.08);}
-    .nav-mode-tab.active{background:#10b981;color:#fff!important;}
-    #ctrl-bar{background:#1e293b;border-bottom:1px solid #334155;padding:0 24px;display:flex;align-items:center;height:52px;gap:1.5rem;flex-wrap:nowrap;position:relative;z-index:100;white-space:nowrap;}
-    #ctrl-bar label{color:#cbd5e1;font-weight:600;font-size:13px;white-space:nowrap;margin:0;}
-    .ctrl-select{background:#334155;color:#f8fafc;border:1px solid #475569;padding:4px 10px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;outline:none;cursor:pointer;height:30px;}
-    .ctrl-sep{width:1px;height:24px;background:#334155;flex-shrink:0;}
-    .ctrl-btn-icon{width:14px;height:14px;flex-shrink:0;vertical-align:middle;position:relative;top:-1px;}
-    .sm-btn{background:#334155;color:#f8fafc;border:1px solid #475569;padding:4px 14px;border-radius:6px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;outline:none;cursor:pointer;height:30px;transition:all 0.2s ease;}
-    .sm-btn:hover{background:#475569;}
+    #algo-hover-card.visible { opacity: 1; transform: translateY(0) translateX(10px); }
+    #algo-card-title { font-size: 15px; font-weight: 700; color: #fff; margin: 0; }
+    #algo-card-desc  { font-size: 13px; color: #94a3b8; margin: 0; line-height: 1.5; }
+    .algo-card-badges { display: flex; gap: 8px; }
+    .algo-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid; }
+    .algo-badge.tc { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #10b981; }
+    .algo-badge.sc { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); color: #93c5fd; }
 
-    /* ── Layout ── */
-    html, body { overflow: hidden; height: 100%; }
-    #workspace-container {
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-      height: calc(100vh - 52px - 52px);
-      transition: all 0.3s ease;
-      overflow: hidden;
+    /* ── Micro animations for grid cells ── */
+    @keyframes visitPulse {
+      0%   { transform: scale(0.3); opacity: 0; }
+      50%  { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
     }
-    #main-visualizer {
-      width: 100%;
-      height: 100%;
-      flex-shrink: 0;
-      transition: width 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow: hidden;
-    }
-    #workspace-container.active-split #main-visualizer {
-      width: 70%;
-    }
-    /* Constrain the board so it fits viewport */
-    #board {
-      max-height: calc(100vh - 130px);
-      overflow: hidden;
-      display: block;
-    }
-    #board td { width: 22px !important; height: 22px !important; }
-    #code-panel {
-      width: 0%;
-      height: 100%;
-      flex-shrink: 0;
-      position: relative;
-      min-height: 100vh;
-      background-color: #1e1e1e;
-      color: #d4d4d4;
-      transition: width 0.3s ease;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      border-left: 0px solid transparent;
-    }
-    #workspace-container.active-split #code-panel {
-      width: 30%;
-      border-left: 2px solid #333333;
-    }
-    .code-panel-header {
-      background-color: #252526;
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #333333;
-    }
-    .code-panel-header select {
-      background: #3c3c3c;
-      color: #cccccc;
-      border: 1px solid #555555;
-      padding: 4px 8px;
-      border-radius: 4px;
-      outline: none;
-    }
-    .code-panel-content {
-      padding: 1.5rem;
-      background-color: #1e1e1e;
-      overflow-x: auto;
-      flex-grow: 1;
-    }
-    #code-container {
-      font-family: 'Fira Code', 'Courier New', monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      letter-spacing: 0.5px;
-      counter-reset: line;
-    }
-    .code-line {
-      display: block;
-      padding: 4px 8px;
-      border-left: 2px solid transparent;
-      counter-increment: line;
-      box-sizing: border-box;
-      width: 100%;
-    }
-    .code-line::before {
-      content: counter(line);
-      display: inline-block;
-      width: 1.5rem;
-      margin-right: 1.5rem;
-      text-align: right;
-      color: #858585;
-      user-select: none;
-    }
-    .code-line.active-line {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-left: 2px solid #10b981;
-      font-weight: bold;
-      color: #ffffff;
-    }
-    #actualStartButton {
-      background-color: #10b981 !important;
-      border: none !important;
-      color: white !important;
-      font-weight: 700 !important;
-      border-radius: 6px !important;
-      padding: 8px 24px !important;
-      transition: all 0.2s ease !important;
-      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3) !important;
-    }
-    #actualStartButton:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4) !important;
-      background-color: #059669 !important;
-    }
-    .speed-pill-container {
-      background-color: #334155;
-      border-radius: 9999px;
-      padding: 4px;
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-    .speed-pill-btn {
-      border: none !important;
-      padding: 4px 12px !important;
-      border-radius: 9999px !important;
-      transition: all 0.2s ease !important;
-      font-size: 16px !important;
-      line-height: 1 !important;
-    }
-    .speed-pill-btn:hover {
-      transform: scale(1.1);
-    }
-    #mainText {
-      padding: 8px 0 !important;
-      background-color: #f8fafc;
-      border-bottom: 1px solid #e2e8f0;
-      width: 100%;
-      flex-shrink: 0;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 12px;
-    }
-    .legend-box {
-      width: 14px !important;
-      height: 14px !important;
-      border-radius: 3px;
-    }
-    /* Dynamic header pill */
-    #algo-active-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #10b981;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 3px 12px;
-      border-radius: 99px;
-      margin-left: 10px;
-      transition: all 0.3s;
-      white-space: nowrap;
+    @keyframes pathGlow {
+      0%   { background: transparent; }
+      100% { box-shadow: 0 0 6px rgba(251,191,36,0.4); }
     }
   </style>
     <link rel="shortcut icon" type="image/png" href="public/styling/c_icon.png"/>
@@ -305,7 +700,7 @@
   <nav class="navbar navbar-inverse" style="z-index:101; position:relative;">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="/" id="refreshButton">algoVisualizer</a>
+        <a class='navbar-brand' href='/' id='refreshButton' style='font-family: Georgia, serif; font-size: 20px; font-weight: 400; font-style: italic; letter-spacing: 0.5px; color: #ffffff; text-decoration: none; padding: 0; line-height: 52px;'>algoVisualizer</a>
       </div>
       <ul class="nav navbar-nav" style="gap:4px;">
         <li><a href="/"        class="nav-mode-tab active"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Pathfinding</a></li>
@@ -314,13 +709,13 @@
       </ul>
       <ul class="nav navbar-nav" style="margin-left:auto;gap:8px;">
         <li style="display:flex;align-items:center;">
-          <button id="path-help-btn" style="background:#334155;color:#cbd5e1;border:none;padding:4px 11px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;">
+          <button id="path-help-btn">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             How to Use
           </button>
         </li>
         <li style="display:flex;align-items:center;">
-          <button id="toggleCodePanelBtn" style="background:#334155;color:#fff;border:none;padding:5px 13px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;transition:background .2s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:5px;">
+          <button id="toggleCodePanelBtn">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
             Code Tracker
           </button>
@@ -356,11 +751,12 @@
        </ul>
      </div>
 
-     <button id='startButtonAddObject' class="sm-btn" style="background:#334155; color:#f8fafc;">Add Bomb</button>
+     <button id='startButtonAddObject' class="sm-btn">Add Bomb</button>
 
      <div class="ctrl-sep"></div>
-     <div id="startButtonStart" style="display:inline-block;">
-       <button id="actualStartButton" class="sm-btn" type="button" style="background:#059669!important;color:#fff!important;font-weight:700!important;padding:6px 20px!important;transition:all .2s ease!important;box-shadow:0 4px 10px rgba(5,150,105,.35)!important;font-size:13px;display:inline-flex;align-items:center;gap:6px;"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!</button>
+     <div id="startButtonStart" style="display:inline-flex;align-items:center;gap:6px;">
+       <button id="actualStartButton" type="button"><svg class="ctrl-btn-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,3 20,12 6,21"/></svg> Visualize!</button>
+       <span id="algo-active-badge">Select Algorithm</span>
      </div>
      <div class="ctrl-sep"></div>
 
@@ -373,21 +769,7 @@
        </ul>
      </div>
 
-     <div style="display: flex; align-items: center; margin-left: auto;">
-       <label style="margin-right:8px; margin-bottom:0;">Speed:</label>
-       <div class="speed-pill-container" id="speedDisplay" style="display:flex; gap:4px; align-items:center;">
-         <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedSlow" title="Slow" style="background-color: transparent; border-radius: 9999px;">
-           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#94a3b8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
-         </button>
-         <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedAverage" title="Average" style="background-color: transparent; border-radius: 9999px;">
-           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#94a3b8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-         </button>
-         <button type="button" class="btn btn-default speed-pill-btn" id="startButtonSpeedFast" title="Fast" style="background-color: #e2e8f0; border-radius: 9999px;">
-           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#1e293b"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-         </button>
-       </div>
-       <span id="adjustSpeed" style="display:none;"></span>
-     </div>
+     <div style='display:flex;align-items:center;gap:8px;margin-left:auto;'><span style='color:#64748b;font-size:12px;font-weight:600;'>Speed</span><div style='display:inline-flex;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:3px;gap:2px;'><button id='startButtonSpeedSlow' type='button' title='Slow' style='width:30px;height:26px;border-radius:5px;border:none;background:transparent;cursor:pointer;color:#64748b;font-size:10px;font-weight:700;transition:all 0.15s;'>1x</button><button id='startButtonSpeedAverage' type='button' title='Average' style='width:30px;height:26px;border-radius:5px;border:none;background:transparent;cursor:pointer;color:#64748b;font-size:10px;font-weight:700;transition:all 0.15s;'>2x</button><button id='startButtonSpeedFast' type='button' title='Fast' style='width:30px;height:26px;border-radius:5px;border:none;background:#334155;cursor:pointer;color:#e2e8f0;font-size:10px;font-weight:700;transition:all 0.15s;'>3x</button></div></div><span id='adjustSpeed' style='display:none;'></span>
   </div>
 </div>
     <div id="tutorial" style="display: none;">
@@ -418,42 +800,89 @@
     </div>
     <div id="workspace-container">
       <div id="main-visualizer">
-        <div id='mainText' style="width: 100%; margin-bottom: 20px;">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-          <div id="algorithmDescriptor" style="font-size: 13px; font-weight: 600; color: #475569; padding: 0; margin-bottom: 6px; border: none; text-align: center; width: 100%; display:flex; align-items:center; justify-content:center; gap:8px;">Pick an algorithm and visualize it! <span id="algo-active-badge" style="display:none;"></span></div>
-          <ul style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; gap: 1.5rem; margin: 0; padding: 0; list-style: none;">
-            <li class="legend-item"><div class="start legend-box"></div><span style="color: #334155; font-weight: 500;">Start Node</span></li>
-            <li class="legend-item"><div class="target legend-box"></div><span style="color: #334155; font-weight: 500;">Target Node</span></li>
-            <li id="bombLegend" class="bombBlock legend-item"><div class="object legend-box"></div><span style="color: #334155; font-weight: 500;">Bomb Node</span></li>
-            <li id="weightLegend" class="weightBlock legend-item"><div class="weight legend-box"></div><span style="color: #334155; font-weight: 500;">Weight Node</span></li>
-            <li class="legend-item"><div class="unvisited legend-box" style="border: 1px solid #cbd5e1; background-color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"></div><span style="color: #334155; font-weight: 500;">Unvisited</span></li>
-            <li class="legend-item"><div class="visited legend-box"></div><span style="color: #334155; font-weight: 500;">Visited</span></li>
-            <li class="legend-item"><div class="shortest-path legend-box"></div><span style="color: #334155; font-weight: 500;">Shortest-path</span></li>
-            <li class="legend-item"><div class="wall legend-box"></div><span style="color: #334155; font-weight: 500;">Wall Node</span></li>
+        <div id='mainText'>
+          <div id="algorithmDescriptor">Pick an algorithm and visualize it!</div>
+          <ul>
+            <li class="legend-item"><div class="start legend-box"></div><span class="legend-label">Start Node</span></li>
+            <li class="legend-item"><div class="target legend-box"></div><span class="legend-label">Target Node</span></li>
+            <li id="bombLegend" class="bombBlock legend-item"><div class="object legend-box"></div><span class="legend-label">Bomb Node</span></li>
+            <li id="weightLegend" class="weightBlock legend-item"><div class="weight legend-box"></div><span class="legend-label">Weight Node</span></li>
+            <li class="legend-item no-desc"><div class="unvisited legend-box" style="border:1px solid #cbd5e1;background-color:white;box-shadow:0 1px 2px rgba(0,0,0,0.05);"></div><span class="legend-label">Unvisited</span></li>
+            <li class="legend-item no-desc"><div class="visited legend-box"></div><span class="legend-label">Visited</span></li>
+            <li class="legend-item no-desc"><div class="shortest-path legend-box"></div><span class="legend-label">Shortest-path</span></li>
+            <li class="legend-item no-desc"><div class="wall legend-box"></div><span class="legend-label">Wall Node</span></li>
           </ul>
-        </div>
         </div>
         <table id='board'></table>
       </div>
 
-      <!-- The Sliding IDE Panel -->
+      <!-- Drag resize handle -->
+      <div id="resize-handle" title="Drag to resize"></div>
+
+      <!-- Code Panel -->
       <div id="code-panel">
-        <div class="code-panel-header">
-          <span style="font-weight: 600; font-size: 14px; color: #e1e4e8;">Execution Tracker</span>
-          <select id="code-language-selector">
-            <option value="javascript">JavaScript</option>
-            <option value="python">Python</option>
-            <option value="java">Java</option>
-            <option value="cpp">C++</option>
-          </select>
+        <!-- Section A: Code -->
+        <div class="cp-code-section">
+          <div class="code-panel-header">
+            <span style="color:#1e293b;font-weight:700;font-size:13px;">Execution Tracker</span>
+            <div class="code-view-toggle">
+              <button class="code-view-btn active" data-view="pseudo" onclick="switchCodeView('pseudo')">Pseudocode</button>
+              <button class="code-view-btn" data-view="javascript" onclick="switchCodeView('javascript')">JavaScript</button>
+            </div>
+          </div>
+          <div class="code-panel-content">
+            <pre style="background:transparent;border:none;padding:0;color:inherit;overflow:visible;margin:0;white-space:pre-wrap;"><code id="code-container"></code></pre>
+          </div>
         </div>
-        <div class="code-panel-content">
-          <pre style="background: transparent; border: none; padding: 0; color: inherit; overflow: visible;"><code id="code-container">
-<!-- Code lines injected here dynamically -->
-          </code></pre>
+        <!-- Section B: Variables -->
+        <div class="var-inspector" id="pathVarGrid">
+          <div class="var-inspector-header">Variables</div>
+          <div class="var-grid">
+            <div class="var-item"><span class="var-name">Algorithm</span> <span class="var-value dash" id="pv-algorithm">—</span></div>
+            <div class="var-item"><span class="var-name">Nodes Visited</span> <span class="var-value dash" id="pv-visited">0</span></div>
+            <div class="var-item"><span class="var-name">Path Length</span> <span class="var-value dash" id="pv-pathLen">—</span></div>
+            <div class="var-item"><span class="var-name">Current Node</span> <span class="var-value dash" id="pv-current">—</span></div>
+          </div>
+        </div>
+        <!-- Section C: Complexity Chart -->
+        <div class="complexity-section">
+          <div class="cp-section-header">Time Complexity</div>
+          <div class="cp-chart-wrap">
+            <canvas id="complexityChart"></canvas>
+          </div>
+          <div id="chart-legend">
+            <div class="chart-dot-item" data-c="1"><div class="chart-dot" style="background:#94a3b8;"></div>O(1)</div>
+            <div class="chart-dot-item" data-c="logn"><div class="chart-dot" style="background:#10b981;"></div>O(log n)</div>
+            <div class="chart-dot-item" data-c="n"><div class="chart-dot" style="background:#3b82f6;"></div>O(n)</div>
+            <div class="chart-dot-item active" data-c="nlogn"><div class="chart-dot" style="background:#8b5cf6;"></div>O(n log n)</div>
+            <div class="chart-dot-item" data-c="n2"><div class="chart-dot" style="background:#ef4444;"></div>O(n²)</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Post-Visualization Stats Bar -->
+    <div id="path-stats-bar">
+      <div class="stat-item">Algorithm <span class="stat-val algo" id="ps-algo">&#8212;</span></div>
+      <div class="stat-item">Nodes Visited <span class="stat-val vis" id="ps-visited">0</span></div>
+      <div class="stat-item">Path Length <span class="stat-val path" id="ps-path">0</span></div>
+      <div class="stat-item">Weighted <span class="stat-val" id="ps-weighted">&#8212;</span></div>
+      <div class="stat-item">Shortest Path <span class="stat-val" id="ps-guarantee">&#8212;</span></div>
+      <button class="stat-dismiss" onclick="document.getElementById('path-stats-bar').classList.remove('visible')" title="Dismiss">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Variable Bottom Strip -->
+    <div id="var-bottom-strip">
+      <div class="vs-item"><span class="vs-name">algorithm</span> <span class="vs-val" id="vs-algorithm">&mdash;</span></div>
+      <div class="vs-item"><span class="vs-name">visited</span> <span class="vs-val" id="vs-visited">0</span></div>
+      <div class="vs-item"><span class="vs-name">queue</span> <span class="vs-val" id="vs-queue">0</span></div>
+      <div class="vs-item"><span class="vs-name">current</span> <span class="vs-val" id="vs-current">&mdash;</span></div>
+      <div class="vs-item"><span class="vs-name">pathLen</span> <span class="vs-val" id="vs-pathLen">&mdash;</span></div>
+      <div class="vs-item"><span class="vs-name">weighted</span> <span class="vs-val" id="vs-weighted">&mdash;</span></div>
+    </div>
+
     <div id="algo-hover-card">
       <div id="algo-card-title">Algorithm Name</div>
       <p id="algo-card-desc">Description of the algorithm goes here. It provides a quick summary.</p>
@@ -544,7 +973,7 @@
           });
         }
       });
-      // Dynamic header badge — show selected algorithm
+      // Fix 7: algo badge — update on selection
       const badge = document.getElementById('algo-active-badge');
       Object.keys(algoData).forEach(id => {
         const el = document.getElementById(id);
@@ -552,85 +981,462 @@
           el.addEventListener('click', () => {
             if (badge) {
               badge.textContent = algoData[id].title;
-              badge.style.display = 'inline-flex';
+              badge.classList.add('selected');
             }
-            document.getElementById('algorithmDescriptor').childNodes[0].textContent = '';
+            const desc = document.getElementById('algorithmDescriptor');
+            if (desc) desc.textContent = '';
+            // Fix 8: update stats bar algo name (pre-emptively)
+            const ps = document.getElementById('ps-algo');
+            if (ps) ps.textContent = algoData[id].title;
           });
         }
       });
-    });
-  </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const algorithmsCode = {
-        dijkstra: {
-          javascript: [
-            "function dijkstra(graph, startNode) {",
-            "  const distances = {};",
-            "  distances[startNode] = 0;",
-            "  while (pq.length > 0) {",
-            "    let current = pq.dequeue();",
-            "    for (let neighbor of graph[current]) {"
-          ],
-          python: [
-            "def dijkstra(graph, start):",
-            "  distances = {node: float('inf') for node in graph}",
-            "  distances[start] = 0",
-            "  while queue:",
-            "    current = heapq.heappop(queue)",
-            "    for neighbor, weight in current.edges:"
-          ],
-          cpp: [
-            "void dijkstra(int start) {",
-            "  vector<int> dist(V, INF);",
-            "  dist[start] = 0;",
-            "  while(!pq.empty()) {",
-            "    int u = pq.top().second;",
-            "    for(auto x : adj[u]) {"
-          ],
-          java: [
-            "public void dijkstra(int start) {",
-            "  int[] dist = new int[V];",
-            "  Arrays.fill(dist, Integer.MAX_VALUE);",
-            "  dist[start] = 0;",
-            "  while(!pq.isEmpty()) {",
-            "    for(Edge e : adj[u]) {"
-          ]
+
+      function fixHeight() {
+        const nb = document.getElementById('navbarDiv');
+        const cb = document.getElementById('ctrl-bar');
+        const mt = document.getElementById('mainText');
+        const sb = document.getElementById('var-bottom-strip');
+        const ws = document.getElementById('workspace-container');
+        if (!ws) return;
+        const used = (nb||{offsetHeight:52}).offsetHeight + (cb||{offsetHeight:48}).offsetHeight + (mt||{offsetHeight:40}).offsetHeight + (sb||{offsetHeight:32}).offsetHeight;
+        ws.style.height = (window.innerHeight - used) + 'px';
+        ws.style.minHeight = '0';
+      }
+      fixHeight();
+      window.addEventListener('resize', fixHeight);
+      setTimeout(fixHeight, 100);
+      setTimeout(fixHeight, 500);
+
+      // Navbar scroll shadow
+      const navbar = document.querySelector('.navbar-inverse');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) navbar?.classList.add('scrolled');
+        else navbar?.classList.remove('scrolled');
+      }, { passive: true });
+
+      // Drag-resize handle
+      const handle = document.getElementById('resize-handle');
+      const mainViz = document.getElementById('main-visualizer');
+      const codePanel = document.getElementById('code-panel');
+      const wsContainer = document.getElementById('workspace-container');
+      if (handle && mainViz && codePanel) {
+        let dragging = false;
+        const savedRatio = parseFloat(localStorage.getItem('av_split_ratio') || '0.7');
+        handle.addEventListener('mousedown', e => {
+          dragging = true;
+          handle.classList.add('dragging');
+          document.body.style.cursor = 'col-resize';
+          document.body.style.userSelect = 'none';
+        });
+        document.addEventListener('mousemove', e => {
+          if (!dragging) return;
+          const rect = wsContainer.getBoundingClientRect();
+          let ratio = (e.clientX - rect.left) / rect.width;
+          ratio = Math.max(0.25, Math.min(0.80, ratio));
+          mainViz.style.width  = (ratio * 100) + '%';
+          codePanel.style.width = ((1 - ratio) * 100) + '%';
+          localStorage.setItem('av_split_ratio', ratio);
+        });
+        document.addEventListener('mouseup', () => {
+          if (!dragging) return;
+          dragging = false;
+          handle.classList.remove('dragging');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        });
+        // Restore saved ratio
+        wsContainer.addEventListener('transitionend', () => {
+          if (wsContainer.classList.contains('active-split')) {
+            const r = parseFloat(localStorage.getItem('av_split_ratio') || '0.7');
+            mainViz.style.width  = (r * 100) + '%';
+            codePanel.style.width = ((1 - r) * 100) + '%';
+          } else {
+            mainViz.style.width = '';
+            codePanel.style.width = '';
+          }
+        }, { once: false });
+      }
+
+      // updatePathVar — also writes to bottom strip
+      window.updatePathVar = function(id, value) {
+        // legacy panel vars (hidden but IDs preserved)
+        const el = document.getElementById('pv-' + id);
+        if (el) el.textContent = value;
+        // bottom strip vars
+        const vs = document.getElementById('vs-' + id);
+        if (!vs) return;
+        const prev = vs.textContent;
+        if (prev === String(value)) return;
+        vs.textContent = value;
+        const item = vs.closest('.vs-item');
+        if (item) {
+          item.classList.remove('flashing');
+          void item.offsetWidth;
+          item.classList.add('flashing');
         }
       };
 
-      let currentAlgorithm = 'dijkstra';
-      let currentLanguage = 'javascript';
+      document.querySelectorAll('#startButtonSpeedSlow,#startButtonSpeedAverage,#startButtonSpeedFast').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          document.querySelectorAll('#startButtonSpeedSlow,#startButtonSpeedAverage,#startButtonSpeedFast').forEach(b=>{
+            b.style.background='transparent';
+            b.style.color='#64748b';
+          });
+          btn.style.background='#334155';
+          btn.style.color='#e2e8f0';
+        });
+      });
+
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // ── CODE SNIPPETS (pseudo + JS for all algos) ─────────
+      const CODES = {
+        dijkstra: {
+          pseudo: [
+            "function dijkstra(grid, start, end):",
+            "  distances[start] = 0",
+            "  priority_queue.add(start, 0)",
+            "  while queue not empty:",
+            "    current = queue.extractMin()",
+            "    if current == end: return path",
+            "    for each neighbor of current:",
+            "      newDist = dist[current] + weight",
+            "      if newDist < dist[neighbor]:",
+            "        dist[neighbor] = newDist",
+            "        previous[neighbor] = current"
+          ],
+          javascript: [
+            "function dijkstra(nodes, start, target) {",
+            "  nodes[start].distance = 0;",
+            "  const unvisited = getAllNodes(nodes);",
+            "  while (unvisited.length) {",
+            "    sortByDistance(unvisited);",
+            "    const cur = unvisited.shift();",
+            "    if (cur.status==='wall') continue;",
+            "    if (cur.distance===Infinity) return false;",
+            "    cur.status = 'visited';",
+            "    if (cur.id === target) return true;",
+            "    updateNeighbors(cur, nodes);",
+            "  }",
+            "}"
+          ]
+        },
+        astar: {
+          pseudo: [
+            "function aStar(grid, start, end):",
+            "  gScore[start] = 0",
+            "  fScore[start] = h(start, end)",
+            "  openSet.add(start)",
+            "  while openSet not empty:",
+            "    current = openSet.extractMinF()",
+            "    if current == end: return path",
+            "    for each neighbor:",
+            "      tentG = gScore[current] + dist",
+            "      if tentG < gScore[neighbor]:",
+            "        gScore[neighbor] = tentG",
+            "        fScore[neighbor] = tentG + h(neighbor, end)"
+          ],
+          javascript: [
+            "function astar(nodes, start, target) {",
+            "  nodes[start].distance = 0;",
+            "  nodes[start].totalDist = h(start, target);",
+            "  const unvisited = getAllNodes(nodes);",
+            "  while (unvisited.length) {",
+            "    sortByTotal(unvisited);",
+            "    const cur = unvisited.shift();",
+            "    if (cur.status==='wall') continue;",
+            "    cur.status = 'visited';",
+            "    if (cur.id === target) return true;",
+            "    updateNeighborsA(cur, target, nodes);",
+            "  }",
+            "}"
+          ]
+        },
+        bfs: {
+          pseudo: [
+            "function bfs(grid, start, end):",
+            "  queue.enqueue(start)",
+            "  visited[start] = true",
+            "  while queue not empty:",
+            "    current = queue.dequeue()",
+            "    if current == end: return path",
+            "    for each neighbor:",
+            "      if not visited[neighbor]:",
+            "        visited[neighbor] = true",
+            "        previous[neighbor] = current",
+            "        queue.enqueue(neighbor)"
+          ],
+          javascript: [
+            "function bfs(nodes, start, target) {",
+            "  const queue = [nodes[start]];",
+            "  while (queue.length) {",
+            "    const cur = queue.shift();",
+            "    if (cur.id === target) return true;",
+            "    const nbrs = getNeighbors(cur);",
+            "    for (const n of nbrs) {",
+            "      if (n.status==='wall') continue;",
+            "      if (n.status!=='visited') {",
+            "        n.status = 'visited';",
+            "        n.previousNode = cur.id;",
+            "        queue.push(n);",
+            "      }",
+            "    }",
+            "  }",
+            "  return false;",
+            "}"
+          ]
+        },
+        dfs: {
+          pseudo: [
+            "function dfs(grid, start, end):",
+            "  stack.push(start)",
+            "  while stack not empty:",
+            "    current = stack.pop()",
+            "    if current == end: return path",
+            "    if not visited[current]:",
+            "      visited[current] = true",
+            "      for each neighbor:",
+            "        stack.push(neighbor)"
+          ],
+          javascript: [
+            "function dfs(nodes, start, target) {",
+            "  const stack = [nodes[start]];",
+            "  while (stack.length) {",
+            "    const cur = stack.pop();",
+            "    if (cur.id === target) return true;",
+            "    if (cur.status==='visited') continue;",
+            "    cur.status = 'visited';",
+            "    for (const n of getNeighbors(cur)) {",
+            "      if (n.status!=='wall'&&n.status!=='visited')",
+            "        stack.push(n);",
+            "    }",
+            "  }",
+            "  return false;",
+            "}"
+          ]
+        }
+      };
+      // Use dijkstra as default for unknown algo keys
+      const getFallback = key => CODES[key] || CODES.dijkstra;
+
+      let currentView = 'pseudo';
+      let currentAlgoKey = 'dijkstra';
       const codeContainer = document.getElementById('code-container');
-      const languageSelector = document.getElementById('code-language-selector');
+
+      // Algo key mapping from button IDs
+      const ALGO_KEY_MAP = {
+        startButtonDijkstra: 'dijkstra',
+        startButtonAStar2: 'astar',
+        startButtonGreedy: 'astar',
+        startButtonAStar: 'dijkstra',
+        startButtonAStar3: 'dijkstra',
+        startButtonBidirectional: 'dijkstra',
+        startButtonBFS: 'bfs',
+        startButtonDFS: 'dfs'
+      };
 
       function renderCode() {
-        if (!algorithmsCode[currentAlgorithm] || !algorithmsCode[currentAlgorithm][currentLanguage]) return;
-        const codeLines = algorithmsCode[currentAlgorithm][currentLanguage];
-        codeContainer.innerHTML = codeLines.map((line, index) => 
-          `<span id="line-${index + 1}" class="code-line">${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>`
-        ).join('');
+        const snippet = getFallback(currentAlgoKey);
+        const lines = snippet[currentView] || snippet.pseudo;
+        const cc = document.getElementById('code-container');
+        if (!cc) return;
+        cc.innerHTML = lines.map((line, i) => {
+          let html = line.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          html = html.replace(/(['"].*?['"])/g, '<span class=kw-green>$1</span>');
+          html = html.replace(/\b(function|while|if|for|const|let)\b/g, '<span class=kw-purple>$1</span>');
+          html = html.replace(/\b(\d+)\b/g, '<span class=kw-orange>$1</span>');
+          html = html.replace(/\b(return|continue)\b/g, '<span class=kw-blue>$1</span>');
+          return `<span id="line-${i+1}" class="code-line">${html}</span>`;
+        }).join('');
       }
 
-      languageSelector.addEventListener('change', (e) => {
-        currentLanguage = e.target.value;
+      window.switchCodeView = function(view) {
+        currentView = view;
+        document.querySelectorAll('.code-view-btn').forEach(b =>
+          b.classList.toggle('active', b.dataset.view === view)
+        );
         renderCode();
-      });
+      };
 
       window.highlightLine = function(lineNumber) {
         document.querySelectorAll('.code-line.active-line').forEach(el => el.classList.remove('active-line'));
         const lineEl = document.getElementById(`line-${lineNumber}`);
         if (lineEl) {
           lineEl.classList.add('active-line');
-          lineEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          lineEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       };
+
+      // Switch code when algo selected
+      Object.keys(ALGO_KEY_MAP).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('click', () => {
+          currentAlgoKey = ALGO_KEY_MAP[id];
+          renderCode();
+          updateComplexityChart();
+        });
+      });
+
+      renderCode();
+
+      // Fix 5: variable inspector flash helper
+      window.updatePathVar = function(id, value) {
+        const el = document.getElementById('pv-' + id);
+        if (!el) return;
+        const prev = el.textContent;
+        if (prev === String(value)) return;
+        el.textContent = value;
+        const isDash = (value === '—' || value === '' || value == null);
+        el.className = isDash ? 'var-value dash' : 'var-value';
+        const item = el.closest('.var-item');
+        if (item) {
+          item.classList.remove('flashing');
+          void item.offsetWidth; // reflow
+          item.classList.add('flashing');
+        }
+      };
+
+      // Animation observer for variable inspector
+      let visitedCount = 0, pathCount = 0, observerRef = null;
+      function startObs() {
+        visitedCount = 0; pathCount = 0;
+        const board = document.getElementById('board');
+        if (!board || observerRef) return;
+        observerRef = new MutationObserver(mutations => {
+          for (const m of mutations) {
+            if (m.attributeName !== 'class') continue;
+            const cls = m.target.className;
+            if (cls.includes('visited') && !cls.includes('start') && !cls.includes('target') && !cls.includes('object')) {
+              visitedCount++;
+              if (visitedCount % 5 === 0 || visitedCount < 6) {
+                window.updatePathVar('visited', visitedCount);
+                window.updatePathVar('current', m.target.id || '—');
+                window.highlightLine((visitedCount % 4) + 4);
+              }
+            }
+            if (cls.includes('shortest-path')) {
+              pathCount++;
+              window.updatePathVar('pathLen', pathCount);
+            }
+          }
+        });
+        observerRef.observe(board, { attributes: true, subtree: true, attributeFilter: ['class'] });
+      }
+      function stopObs() {
+        if (observerRef) { observerRef.disconnect(); observerRef = null; }
+      }
+
+      const startBtnDiv = document.getElementById('startButtonStart');
+      if (startBtnDiv) {
+        startBtnDiv.addEventListener('click', () => {
+          stopObs();
+          visitedCount = 0; pathCount = 0;
+          window.updatePathVar('visited', 0);
+          window.updatePathVar('current', '—');
+          window.updatePathVar('pathLen', '—');
+          document.getElementById('path-stats-bar')?.classList.remove('visible');
+          window.highlightLine(1);
+          setTimeout(startObs, 120);
+
+          // watch for completion
+          const chk = setInterval(() => {
+            const sp = document.getElementById('board')?.querySelectorAll('[class*="shortest-path"]') || [];
+            if (sp.length > 0 && pathCount > 0) {
+              clearInterval(chk);
+              setTimeout(showStats, 500);
+            }
+          }, 400);
+          setTimeout(() => clearInterval(chk), 60000);
+        });
+      }
+
+      // Fix 8: show stats bar
+      const algoMetaMap = {
+        startButtonDijkstra:      { weighted: true,  guarantee: true  },
+        startButtonAStar2:        { weighted: true,  guarantee: true  },
+        startButtonGreedy:        { weighted: true,  guarantee: false },
+        startButtonAStar:         { weighted: true,  guarantee: false },
+        startButtonAStar3:        { weighted: true,  guarantee: false },
+        startButtonBidirectional: { weighted: true,  guarantee: false },
+        startButtonBFS:           { weighted: false, guarantee: true  },
+        startButtonDFS:           { weighted: false, guarantee: false }
+      };
+      let lastAlgoId = 'startButtonDijkstra';
+      Object.keys(algoMetaMap).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', () => { lastAlgoId = id; });
+      });
+
+      function showStats() {
+        stopObs();
+        const meta = algoMetaMap[lastAlgoId] || {};
+        const algoName = document.getElementById('ps-algo')?.textContent || '—';
+        const psV = document.getElementById('ps-visited');
+        const psP = document.getElementById('ps-path');
+        const psW = document.getElementById('ps-weighted');
+        const psG = document.getElementById('ps-guarantee');
+        if (psV) psV.textContent = visitedCount.toLocaleString();
+        if (psP) { psP.textContent = pathCount.toLocaleString(); psP.className = 'stat-val'; }
+        if (psW) { psW.textContent = meta.weighted ? 'Yes' : 'No'; psW.className = meta.weighted ? 'stat-val' : 'stat-val bad'; }
+        if (psG) { psG.textContent = meta.guarantee ? '✓ Guaranteed' : '✗ Not guaranteed'; psG.className = meta.guarantee ? 'stat-val' : 'stat-val bad'; }
+        document.getElementById('path-stats-bar')?.classList.add('visible');
+        window.updatePathVar('visited', visitedCount);
+        window.updatePathVar('pathLen', pathCount);
+        window.updatePathVar('current', 'done');
+      }
+
+      // Complexity chart
+      let complexityChart = null;
+      function buildChart() {
+        const ctx = document.getElementById('complexityChart');
+        if (!ctx || !window.Chart) return;
+        const N = 40;
+        const labels = Array.from({length: N}, (_, i) => i + 1);
+        const datasets = [
+          { label:'O(1)',      data: labels.map(()=>1),                            borderColor:'#94a3b8', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false, tension:0.3 },
+          { label:'O(log n)', data: labels.map(n=>Math.log2(n)),                  borderColor:'#10b981', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false, tension:0.3 },
+          { label:'O(n)',     data: labels.map(n=>n),                              borderColor:'#3b82f6', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false, tension:0.3 },
+          { label:'O(n log n)', data: labels.map(n=>n*Math.log2(Math.max(n,1))), borderColor:'#8b5cf6', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false, tension:0.3 },
+          { label:'O(n²)',    data: labels.map(n=>n*n),                            borderColor:'#ef4444', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false, tension:0.3 }
+        ];
+        complexityChart = new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { callbacks: { title: c=>`n=${c[0].label}`, label: c=>`${c.dataset.label}: ${Math.round(c.raw)}` } } },
+            scales: {
+              x: { backgroundColor: '#ffffff', ticks:{color:'#94a3b8',font:{size:8},maxTicksLimit:6}, grid:{color:'rgba(0,0,0,0.05)'} },
+              y: { backgroundColor: '#ffffff', ticks:{color:'#94a3b8',font:{size:8},maxTicksLimit:5}, grid:{color:'rgba(0,0,0,0.05)'}, max: 400 }
+            }
+          }
+        });
+      }
+      function updateComplexityChart() {
+        if (!complexityChart) return;
+        const algoComplexity = { dijkstra:'nlogn', astar:'nlogn', bfs:'n', dfs:'n' };
+        const cIdx = { '1':0,'logn':1,'n':2,'nlogn':3,'n2':4 };
+        const activeIdx = cIdx[algoComplexity[currentAlgoKey] || 'nlogn'] ?? 3;
+        const defaultColors = ['#94a3b8','#10b981','#3b82f6','#8b5cf6','#ef4444'];
+        complexityChart.data.datasets.forEach((ds, i) => {
+          ds.borderWidth = i === activeIdx ? 3 : 1;
+          ds.borderDash  = i === activeIdx ? [] : [4,4];
+          ds.borderColor = i === activeIdx ? defaultColors[i] : defaultColors[i] + '66';
+        });
+        complexityChart.update('none');
+      }
+      setTimeout(buildChart, 350);
 
       window.toggleSplitScreen = function(show) {
         const workspace = document.getElementById('workspace-container');
         if (show !== undefined) {
-          if (show) workspace.classList.add('active-split');
-          else workspace.classList.remove('active-split');
+          show ? workspace.classList.add('active-split') : workspace.classList.remove('active-split');
         } else {
           workspace.classList.toggle('active-split');
         }
@@ -638,22 +1444,18 @@
 
       const toggleBtn = document.getElementById('toggleCodePanelBtn');
       if (toggleBtn) {
-        toggleBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          window.toggleSplitScreen();
-        });
+        toggleBtn.addEventListener('click', e => { e.preventDefault(); window.toggleSplitScreen(); });
       }
 
       const helpBtn = document.getElementById('path-help-btn');
       if (helpBtn) {
-        helpBtn.addEventListener('click', (e) => {
+        helpBtn.addEventListener('click', e => {
           e.preventDefault();
           const tut = document.getElementById('tutorial');
           if (tut) tut.style.display = tut.style.display === 'none' ? 'block' : 'none';
         });
       }
 
-      renderCode();
     });
   </script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
